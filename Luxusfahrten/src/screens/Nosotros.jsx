@@ -1,15 +1,14 @@
-import React, { useState, useEffect } from 'react';
+// Importamos los estilos y el subcomponente necesario.
+import React from 'react';
 import '../components/Home.css'; 
-import Info from '../components/aboutUs'
+import Info from '../components/aboutUs'; 
 
 const Home = () => {
-
-
   return (
-    <div >
-   <Info/>
+    <div>
+      <Info/> {/* Renderiza el componente 'Info', modular y reutilizable. */}
     </div>
   );
 };
 
-export default Home;
+export default Home; // Exporta el componente para usarlo en otras partes del proyecto.

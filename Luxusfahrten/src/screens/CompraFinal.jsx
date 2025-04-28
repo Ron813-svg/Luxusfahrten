@@ -2,6 +2,8 @@ import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 
 const ResumenCompra = () => {
+  // Estado para manejar los datos de la compra.
+  // Se inicializa con valores de ejemplo para cada campo.
   const [datosCompra, setDatosCompra] = useState({
     nombre: "Diego Alberto Santos",
     documento: "82776353-1",
@@ -16,12 +18,17 @@ const ResumenCompra = () => {
     fechaEntrega: "13 de junio de 2025",
   });
 
+  
+ // Calcular el total a pagar sumando los precios de los diferentes componentes.
+  // Se suman el precio del vehículo, las modificaciones y la gestión de envío.
   const totalPagar =
     datosCompra.precioVehiculo +
     datosCompra.modificaciones +
     datosCompra.gestionEnvio;
 
   return (
+    // Contenedor principal del resumen de compra.
+    // Se utiliza Bootstrap para el diseño y la estructura.
     <div className="container mt-4 p-5 d-flex justify-content-center">
       <div className="card shadow" style={{ width: "600px" }}>
         <div className="card-header bg-primary text-white">
@@ -54,5 +61,6 @@ const ResumenCompra = () => {
     </div>
   );
 };
+
 
 export default ResumenCompra;

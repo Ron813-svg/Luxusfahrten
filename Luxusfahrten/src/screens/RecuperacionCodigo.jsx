@@ -44,6 +44,7 @@ const VerifyCode = () => {
   };
 
   return (
+    // Contenedor principal del formulario de verificación de código.
     <div className="container-fluid d-flex justify-content-center align-items-center vh-100" style={{ backgroundColor: '#333' }}>
       <div className="card shadow-sm" style={{ maxWidth: '320px', width: '90%', backgroundColor: '#5a5a5a', color: 'white' }}>
         <div className="card-body px-4 py-4">

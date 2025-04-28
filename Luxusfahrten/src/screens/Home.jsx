@@ -1,5 +1,7 @@
 import React, { useState, useEffect } from 'react';
 import '../components/Home.css'; 
+
+//importo las cards de los autos , las respectivas imagenes y el carrusel 
 import Card1 from '../components/card.jsx';
 import Card2 from '../components/card2.jsx';
 import Img2 from '../assets/16655773891850.jpg';
@@ -8,9 +10,11 @@ import { Carousel } from 'react-bootstrap';
 
 const Home = () => {
   return (
+
+    //Este es el contenedor, guarda el carrusel y las cards de los autos
     <div className="home-container">
       
-      
+      {/* Aqui esta el codigo del carousel utilizando bootstrap*/ }
       <div className="carousel-wrapper">
         <Carousel>
           <Carousel.Item>
@@ -25,7 +29,7 @@ const Home = () => {
         </Carousel>
       </div>
 
-     
+     {/* Este es el codigo donde se guarda las cards */ }
       <div className="car-cards-container">
         <Card1 />
         <Card1 />

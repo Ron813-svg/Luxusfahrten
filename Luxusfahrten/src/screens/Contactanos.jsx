@@ -6,6 +6,9 @@ const ContactSection = () => {
   const mapEmbedUrl = `https://www.google.com/maps/embed/v1/place?q=Av.+Paseo+del+Prestige+%23789,+Distrito+Exclusivo,+San+Salvador,+El+Salvador&key=YOUR_API_KEY`; // Reemplaza YOUR_API_KEY
 
   return (
+    // Contenedor principal para la sección de contacto
+    // Utiliza Bootstrap para el diseño responsivo y estilos
+
     <div className="container py-5">
       <div className="row">
         <div className="col-md-6 mb-4 mb-md-0">
@@ -29,6 +32,7 @@ const ContactSection = () => {
                 <strong>Horario de Atención:</strong> Lunes a Viernes: 9:00 AM - 7:00 PM | Sábados: 10:00 AM - 5:00 PM | Domingo: Cerrado.
               </p>
               {/* Mapa de Google Maps integrado */}
+              
               <div className="mt-3 map-responsive">
                 <iframe
                   src={mapEmbedUrl}
@@ -44,6 +48,7 @@ const ContactSection = () => {
             </div>
           </div>
         </div>
+        {/* Formulario de contacto */}
         <div className="col-md-6">
           <div className="card">
             <div className="card-body">

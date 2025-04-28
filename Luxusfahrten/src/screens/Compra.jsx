@@ -3,13 +3,17 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
+  // Este componente muestra los detalles de un producto específico (en este caso, un auto).
   const navigate = useNavigate();
 
   const goToInfo = () => {
+    // Esta función se llama cuando el usuario hace clic en el botón "Llenar Formulario".
+    // Redirige al usuario a la página del formulario de compra.
     navigate('/CompraForm/');
   };
 
   return (
+    // Contenedor principal del detalle del producto.
     <div className="container mt-4">
       <div className="row">
         <div className="col-md-6">
@@ -22,7 +26,7 @@ const ProductDetail = () => {
               alt="Porsche 992 911 GT3" 
               className="img-fluid"
             />
-            
+           
             <div className="card-body pt-3">
               <div className="mb-3">
                 <p className="mb-1 fw-medium">Color elegido:</p>
@@ -32,6 +36,7 @@ const ProductDetail = () => {
                   </div>
                 </div>
               </div>
+              
               
               <div className="mb-3">
                 <p className="mb-1 fw-medium">Color del interior elegido:</p>
@@ -62,6 +67,7 @@ const ProductDetail = () => {
                   <div className="bg-dark rounded-circle" style={{ width: '24px', height: '24px' }}></div>
                 </div>
               </div>
+
               
               <div className="mt-4">
                 <h5 className="text-center mb-3">Versión</h5>

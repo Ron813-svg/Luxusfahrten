@@ -3,6 +3,8 @@ import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link, useNavigate } from 'react-router-dom';
 
 function FormularioCompra() {
+  // Estado para manejar los datos del formulario de compra.
+  // Se inicializa con valores vacíos y booleanos para los checkboxes.
   const [formData, setFormData] = useState({
     nombre: '',
     documento: '',
@@ -14,6 +16,7 @@ function FormularioCompra() {
     aceptaTerminos: false,
   });
 
+
   const handleChange = (e) => {
     const { name, value, type, checked } = e.target;
     setFormData({
@@ -21,6 +24,7 @@ function FormularioCompra() {
       [name]: type === 'checkbox' ? checked : value,
     });
   };
+
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -32,7 +36,9 @@ function FormularioCompra() {
     navigate('/CompraFinal/');
   };
 
+
   return (
+    // Contenedor principal del formulario de compra.
     <div className="container mt-4">
       <form onSubmit={handleSubmit} className="border p-4 shadow rounded">
         <h2 className="text-center mb-4">Formulario de Compra</h2>
@@ -65,6 +71,8 @@ function FormularioCompra() {
             <option value="efectivo">Pago en efectivo</option>
           </select>
         </div>
+
+        {/* Checkbox para contratar seguro del vehículo */}
         <div className="mb-3 form-check">
           <input type="checkbox" name="seguro" className="form-check-input" checked={formData.seguro} onChange={handleChange} />
           <label className="form-check-label">¿Desea contratar seguro del vehículo?</label>

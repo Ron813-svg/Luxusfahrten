@@ -1,7 +1,9 @@
+
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 
 const TermsAndConditions = () => {
+  // Textos de términos y condiciones en formato largo para ser mostrados dinámicamente.
   const termsText = `
     "Lorem ipsum dolor sit amet,
     consectetur adipiscing elit, sed do
@@ -39,16 +41,20 @@ const TermsAndConditions = () => {
   `;
 
   return (
-    <div className="container mt-5 p-5"> {/* Margen superior agregado */}
-      <div className="row">
+    <div className="container mt-5 p-5"> {/* Contenedor principal con estilos de margen y relleno */}
+      <div className="row"> {/* Divide en dos columnas usando Bootstrap */}
+        
+        {/* Columna para la tarjeta de Términos */}
         <div className="col-md-6 mb-4 mb-md-0">
-          <div className="card shadow-lg">
+          <div className="card shadow-lg"> 
             <div className="card-body">
-              <h5 className="card-title text-center">Términos</h5>
-              <p className="card-text">{termsText}</p>
+              <h5 className="card-title text-center">Términos</h5> 
+              <p className="card-text">{termsText}</p> 
             </div>
           </div>
         </div>
+        
+        {/* Columna para la tarjeta de Condiciones */}
         <div className="col-md-6">
           <div className="card shadow-lg">
             <div className="card-body">
@@ -57,6 +63,7 @@ const TermsAndConditions = () => {
             </div>
           </div>
         </div>
+
       </div>
     </div>
   );
