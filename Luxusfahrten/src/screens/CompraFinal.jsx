@@ -22,8 +22,8 @@ const ResumenCompra = () => {
     datosCompra.gestionEnvio;
 
   return (
-    <div className="container mt-4">
-      <div className="card shadow">
+    <div className="container mt-4 p-5 d-flex justify-content-center">
+      <div className="card shadow" style={{ width: "600px" }}>
         <div className="card-header bg-primary text-white">
           <h2 className="mb-0">Resumen de Compra</h2>
         </div>

@@ -1,7 +1,13 @@
 import './card2.css';
 import Img from '../assets/OIP.jpg'
+import { Link, useNavigate } from 'react-router-dom';
 
 function NissanCard() {
+  const navigate = useNavigate();
+
+  const goToInfo = () => {
+    navigate('/Informacion/');
+  };
     return (
       <div className="nissan-card">
         <div className="nissan-header">
@@ -23,7 +29,7 @@ function NissanCard() {
         <div className="nissan-main-features">
           Standard key features
         </div>
-        <button className="nissan-more-info-button">Mas Información</button>
+        <button className="nissan-more-info-button" onClick={goToInfo}>Mas Información</button>
         <div className="nissan-legal-notice">
           Legal Information
         </div>

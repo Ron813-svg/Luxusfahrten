@@ -1,7 +1,14 @@
 import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 const ProductDetail = () => {
+  const navigate = useNavigate();
+
+  const goToInfo = () => {
+    navigate('/CompraForm/');
+  };
+
   return (
     <div className="container mt-4">
       <div className="row">
@@ -103,7 +110,7 @@ const ProductDetail = () => {
                 <p className="fw-bold fs-5 mb-0">$187,413</p>
               </div>
               
-              <button className="btn btn-primary w-100">Llenar Formulario</button>
+              <button className="btn btn-primary w-100" onClick={goToInfo}>Llenar Formulario</button>
             </div>
           </div>
         </div>

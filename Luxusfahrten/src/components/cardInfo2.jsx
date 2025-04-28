@@ -1,4 +1,11 @@
+import { Link, useNavigate } from 'react-router-dom';
+
 function RightCard() {
+  const navigate = useNavigate();
+
+  const goToCompra = () => {
+    navigate('/Compra/');
+  };
     return (
       <div className="right-card">
         <div className="info-columns">
@@ -40,7 +47,7 @@ function RightCard() {
         </div>
   
         <h2 className="price-label">Precio desde:</h2>
-        <button className="price-button">$180,000</button>
+        <button className="price-button" onClick={goToCompra}>$180,000</button>
       </div>
     );
   }

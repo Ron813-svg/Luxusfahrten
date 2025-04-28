@@ -1,7 +1,14 @@
 import './card.css';
 import Img from '../assets/16655773891850.jpg'
+import { Link, useNavigate } from 'react-router-dom';
 
 function CarCard() {
+  const navigate = useNavigate();
+
+  const goToInfo = () => {
+    navigate('/Informacion/');
+  };
+  
     return (
       <div className="car-card">
         <div className="car-header">
@@ -24,7 +31,7 @@ function CarCard() {
         <div className="key-features">
           Standard key features
         </div>
-        <button className="info-button">Mas Información</button>
+        <button className="info-button" onClick={goToInfo}>Mas Información</button>
         <div className="legal-info">
           Legal Information
         </div>

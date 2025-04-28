@@ -13,6 +13,7 @@ import ResumenCompra from './screens/CompraFinal';
 import TermsAndConditions from './screens/TerminosCondiciones';
 import ContactSection from './screens/Contactanos';
 import Footer from './components/footer';
+import InfoCard from './screens/Informacion';
 
 
 
@@ -28,14 +29,13 @@ import Nosotros from './screens/Nosotros'
 <Route path="/" element={<TiendaLujo />} />;
 
 
-const Contacto = () => <div className="container mt-4"><h2>Contáctanos</h2></div>
 
 
 
 function AppContent() {
   const location = useLocation();
   const [showNavbar, setShowNavbar] = useState(true);
-  
+  const [showFooter, setShowFooter] = useState(true);
   // Lista de rutas donde el navbar debe estar oculto
   const authRoutes = ['/login', '/register', '/recuperacion', '/recuperacioncodigo', '/cambiarpassword'];
   
@@ -47,8 +47,13 @@ function AppContent() {
     const shouldHideNavbar = authRoutes.some(route => 
       currentPath === route || currentPath.startsWith(route + '/')
     );
+
+    const shouldHideFooter = authRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(route + '/')
+    );
     
     setShowNavbar(!shouldHideNavbar);
+    setShowFooter(!shouldHideFooter);
   }, [location.pathname]);
 
   return (
@@ -57,7 +62,7 @@ function AppContent() {
       <Routes>
         <Route path="/" element={<Home />} />
         <Route path="/tienda" element={<TiendaLujo />} />
-        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/contacto" element={<ContactSection />} />
         <Route path="/restaurados" element={<TiendaRestaurados />} />
         <Route path="/nosotros" element={<Nosotros />} />
         
@@ -72,8 +77,9 @@ function AppContent() {
         <Route path="/CompraFinal" element={<ResumenCompra />} />
         <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
         <Route path="/Contactanos" element={<ContactSection />} />
+        <Route path="/Informacion" element={<InfoCard />} />
       </Routes>
-      <Footer />
+      {showFooter && <Footer />}
     </>
   )
 }

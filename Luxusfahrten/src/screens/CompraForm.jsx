@@ -1,5 +1,6 @@
 import React, { useState } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
+import { Link, useNavigate } from 'react-router-dom';
 
 function FormularioCompra() {
   const [formData, setFormData] = useState({
@@ -24,6 +25,11 @@ function FormularioCompra() {
   const handleSubmit = (e) => {
     e.preventDefault();
     console.log(formData);
+  };
+
+  const navigate = useNavigate();
+  const goToCompraFinal = () => {
+    navigate('/CompraFinal/');
   };
 
   return (
@@ -67,7 +73,7 @@ function FormularioCompra() {
           <input type="checkbox" name="aceptaTerminos" className="form-check-input" checked={formData.aceptaTerminos} onChange={handleChange} />
           <label className="form-check-label">Acepta los términos y condiciones</label>
         </div>
-        <button type="submit" className="btn btn-primary w-100">Continuar</button>
+        <button type="submit" className="btn btn-primary w-100" onClick={goToCompraFinal}>Continuar</button>
       </form>
     </div>
   );
