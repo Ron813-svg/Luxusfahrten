@@ -1,4 +1,5 @@
 import React from "react";
+import { Link } from 'react-router-dom';
 import { FaInstagram, FaFacebook, FaWhatsapp } from "react-icons/fa";
 import "./Footer.css";
 
@@ -8,10 +9,10 @@ const Footer = () => {
       <div className="footer-links">
         <h3>Links</h3>
         <div>
-          <a href="#">Inicio</a> -{" "}
-          <a href="#">Tienda de Lujo</a> -{" "}
-          <a href="#">Tienda de Restaurados</a> -{" "}
-          <a href="#">Términos y condiciones</a>
+          <Link to="/">Inicio</Link> -{" "}
+          <Link to="/tienda">Tienda de Lujo</Link> -{" "}
+          <Link to="/restaurados">Tienda de Restaurados</Link> -{" "}
+          <Link to="/TerminosCondiciones">Términos y condiciones</Link>
         </div>
       </div>
 
@@ -23,11 +24,17 @@ const Footer = () => {
       <div className="footer-social">
         <h3>Redes Sociales</h3>
         <div className="social-icons">
-          <a href="#" aria-label="Instagram"><FaInstagram size={24} color="#fff" /></a>
-          <a href="#" aria-label="Facebook"><FaFacebook size={24} color="#fff" /></a>
-          <a href="#" aria-label="WhatsApp"><FaWhatsapp size={24} color="#fff" /></a>
+          <a href="https://instagram.com" target="_blank" rel="noopener noreferrer" aria-label="Instagram">
+            <FaInstagram size={24} color="#fff" />
+          </a>
+          <a href="https://facebook.com" target="_blank" rel="noopener noreferrer" aria-label="Facebook">
+            <FaFacebook size={24} color="#fff" />
+          </a>
+          <a href="https://wa.me/50318398346" target="_blank" rel="noopener noreferrer" aria-label="WhatsApp">
+            <FaWhatsapp size={24} color="#fff" />
+          </a>
         </div>
-        <p>Contactanos<br />+503 1839 8346</p>
+        <p>Contáctanos<br />+503 1839 8346</p>
       </div>
     </footer>
   );

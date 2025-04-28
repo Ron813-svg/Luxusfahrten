@@ -1,19 +1,18 @@
 import './card2.css';
 import Img from '../assets/OIP.jpg'
 
-function CarCard() {
+function NissanCard() {
     return (
-      <div className="car-card">
-        <div className="car-header">
-            
+      <div className="nissan-card">
+        <div className="nissan-header">
           <h2>Nissan Skyline R34</h2>
         </div>
         <img 
           src={Img}
           alt="Nissan Skyline R34" 
-          className="car-image"
+          className="nissan-image"
         />
-        <div className="car-features">
+        <div className="nissan-features">
           <ul>
             <li>⚙️ Motor: RB26DETT 2.6L DOHC Twin-Turbo L6 (6 cilindros en línea)</li>
             <li>⚡ Potencia: 276 hp (oficialmente) / Puede superar los 330 hp reales</li>
@@ -21,15 +20,15 @@ function CarCard() {
             <li>🛞 Velocidad Máxima: 250 km/h (limitada electrónicamente)</li>
           </ul>
         </div>
-        <div className="key-features">
+        <div className="nissan-main-features">
           Standard key features
         </div>
-        <button className="info-button">Mas Información</button>
-        <div className="legal-info">
+        <button className="nissan-more-info-button">Mas Información</button>
+        <div className="nissan-legal-notice">
           Legal Information
         </div>
       </div>
     );
-  }
+}
 
-export default CarCard;
+export default NissanCard;

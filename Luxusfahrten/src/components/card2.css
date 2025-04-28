@@ -1,78 +1,135 @@
-.car-card {
-    width: 310px;
-    background: #ffffff;
-    border-radius: 20px;
-    box-shadow: 0px 2px 10px rgba(0,0,0,0.15);
-    overflow: hidden;
-    margin: 20px;
-    font-family: 'Arial', sans-serif;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-  }
-  
-  .car-header {
-    width: 100%;
-    background: #9C999A;
-    color: white;
-    text-align: center;
-    padding: 10px 0;
-    font-size: 20px;
-    font-weight: bold;
-  }
-  
-  .car-header h2 {
-    margin: 0;
-  }
-  
-  .car-image {
-    width: 90%;
-    margin: 15px 0;
-    border-radius: 10px;
-  }
-  
-  .car-features {
-    width: 100%;
-    background: #e0e0e0;
-    padding: 15px;
-    
-    margin-bottom: 10px;
-    font-size: 13px;
-    text-align: left;
-  }
-  
-  .car-features ul {
-    list-style: none;
-    padding: 0;
-  }
-  
-  .car-features li {
-    color: #3E3E3E;
-    font-weight: bold;
-    margin-bottom: 8px;
-  }
-  
-  .key-features {
+.nissan-card {
+  width: 310px;
+  background: #ffffff;
+  border-radius: 20px;
+  box-shadow: 0px 2px 10px rgba(0,0,0,0.15);
+  overflow: hidden;
+  margin: 20px;
+  font-family: 'Arial', sans-serif;
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+}
 
+.nissan-header {
+  width: 100%;
+  background: #7e7e7e;
+  color: white;
+  text-align: center;
+  padding: 10px 0;
+  font-size: 20px;
+  font-weight: bold;
+}
+
+.nissan-header h2 {
+  margin: 0;
+}
+
+.nissan-image {
+  width: 90%;
+  margin: 15px 0;
+  border-radius: 10px;
+}
+
+.nissan-features {
+  width: 100%;
+  background: #e0e0e0;
+  padding: 15px;
+  margin-bottom: 10px;
+  font-size: 13px;
+  text-align: left;
+}
+
+.nissan-features ul {
+  list-style: none;
+  padding: 0;
+}
+
+.nissan-features li {
+  color: #3E3E3E;
+  font-weight: bold;
+  margin-bottom: 8px;
+}
+
+.nissan-main-features {
+  font-size: 11px;
+  color: #777;
+  margin-bottom: 10px;
+}
+
+.nissan-more-info-button {
+  background-color: #636363;
+  color: white;
+  border: none;
+  border-radius: 10px;
+  padding: 10px 20px;
+  margin-bottom: 5px;
+  font-size: 16px;
+  cursor: pointer;
+}
+
+.nissan-legal-notice {
+  font-size: 10px;
+  color: #888;
+  margin-bottom: 10px;
+}
+
+@media (max-width: 1024px) {
+  .nissan-card {
+    width: 270px;
+  }
+  .nissan-image {
+    width: 85%;
+  }
+  .nissan-features {
+    font-size: 12px;
+  }
+  .nissan-more-info-button {
+    padding: 8px 16px;
+    font-size: 14px;
+  }
+}
+
+@media (max-width: 768px) {
+  .nissan-card {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .nissan-image {
+    width: 100%;
+  }
+  .nissan-features {
+    padding: 12px;
     font-size: 11px;
-    color: #777;
-    margin-bottom: 10px;
   }
-  
-  .info-button {
-    background-color: #9C999A;
-    color: white;
-    border: none;
-    border-radius: 10px;
-    padding: 10px 20px;
-    margin-bottom: 5px;
-    font-size: 16px;
-    cursor: pointer;
+  .nissan-more-info-button {
+    padding: 8px 15px;
+    font-size: 14px;
   }
-  
-  .legal-info {
+}
+
+@media (max-width: 480px) {
+  .nissan-card {
+    width: 100%;
+    padding: 10px;
+    margin: 5px 0;
+  }
+  .nissan-header {
+    font-size: 18px;
+  }
+  .nissan-image {
+    width: 100%;
+    margin: 10px 0;
+  }
+  .nissan-features {
+    padding: 10px;
     font-size: 10px;
-    color: #888;
-    margin-bottom: 10px;
   }
-  
+  .nissan-main-features {
+    font-size: 9px;
+  }
+  .nissan-more-info-button {
+    padding: 8px 14px;
+    font-size: 14px;
+  }
+}
