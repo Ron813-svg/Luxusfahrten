@@ -39,7 +39,7 @@ const TermsAndConditions = () => {
   `;
 
   return (
-    <div className="container mt-5"> {/* Margen superior agregado */}
+    <div className="container mt-5 p-5"> {/* Margen superior agregado */}
       <div className="row">
         <div className="col-md-6 mb-4 mb-md-0">
           <div className="card shadow-lg">

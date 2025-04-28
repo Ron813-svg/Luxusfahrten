@@ -12,13 +12,25 @@ import FormularioCompra from './screens/CompraForm';
 import ResumenCompra from './screens/CompraFinal';
 import TermsAndConditions from './screens/TerminosCondiciones';
 import ContactSection from './screens/Contactanos';
+import Footer from './components/footer';
 
 
-const Home = () => <div className="container mt-4"><h2>Página Principal</h2></div>
-const TiendaLujo = () => <div className="container mt-4"><h2>Tienda de Lujo</h2></div>
+
+
+//Paginas Principales
+import Home from './screens/Home';
+import TiendaLujo from './screens/TiendaLujo';
+import TiendaRestaurados from './screens/TiendaRestaurados'
+import Nosotros from './screens/Nosotros'
+
+
+<Route path="/" element={<Home />} />;
+<Route path="/" element={<TiendaLujo />} />;
+
+
 const Contacto = () => <div className="container mt-4"><h2>Contáctanos</h2></div>
-const TiendaRestaurados = () => <div className="container mt-4"><h2>Tienda Restaurados</h2></div>
-const Nosotros = () => <div className="container mt-4"><h2>Sobre Nosotros</h2></div>
+
+
 
 function AppContent() {
   const location = useLocation();
@@ -61,6 +73,7 @@ function AppContent() {
         <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
         <Route path="/Contactanos" element={<ContactSection />} />
       </Routes>
+      <Footer />
     </>
   )
 }
