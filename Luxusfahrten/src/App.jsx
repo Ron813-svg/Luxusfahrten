@@ -7,6 +7,12 @@ import Register from './screens/Register'
 import Recuperacion from './screens/Recuperacion'
 import VerifyCode from './screens/RecuperacionCodigo'
 import CambiarPassword from './screens/CambiarPassword'
+import ProductDetail from './screens/Compra';
+import FormularioCompra from './screens/CompraForm';
+import ResumenCompra from './screens/CompraFinal';
+import TermsAndConditions from './screens/TerminosCondiciones';
+import ContactSection from './screens/Contactanos';
+
 
 const Home = () => <div className="container mt-4"><h2>Página Principal</h2></div>
 const TiendaLujo = () => <div className="container mt-4"><h2>Tienda de Lujo</h2></div>
@@ -49,6 +55,11 @@ function AppContent() {
         <Route path="/recuperacion" element={<Recuperacion />} />
         <Route path="/recuperacioncodigo" element={<VerifyCode />} />
         <Route path="/cambiarpassword" element={<CambiarPassword />} />
+        <Route path="/Compra" element={<ProductDetail />} />
+        <Route path="/CompraForm" element={<FormularioCompra />} />
+        <Route path="/CompraFinal" element={<ResumenCompra />} />
+        <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
+        <Route path="/Contactanos" element={<ContactSection />} />
       </Routes>
     </>
   )
