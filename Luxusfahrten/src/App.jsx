@@ -1,34 +1,64 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Login from './screens/Login'
+import Register from './screens/Register'
+import Recuperacion from './screens/Recuperacion'
+import VerifyCode from './screens/RecuperacionCodigo'
+import CambiarPassword from './screens/CambiarPassword'
 
-function App() {
-  const [count, setCount] = useState(0)
+const Home = () => <div className="container mt-4"><h2>Página Principal</h2></div>
+const TiendaLujo = () => <div className="container mt-4"><h2>Tienda de Lujo</h2></div>
+const Contacto = () => <div className="container mt-4"><h2>Contáctanos</h2></div>
+const TiendaRestaurados = () => <div className="container mt-4"><h2>Tienda Restaurados</h2></div>
+const Nosotros = () => <div className="container mt-4"><h2>Sobre Nosotros</h2></div>
+
+function AppContent() {
+  const location = useLocation();
+  const [showNavbar, setShowNavbar] = useState(true);
+  
+  // Lista de rutas donde el navbar debe estar oculto
+  const authRoutes = ['/login', '/register', '/recuperacion', '/recuperacioncodigo', '/cambiarpassword'];
+  
+  useEffect(() => {
+    // Obtener la ruta actual sin barras finales y en minúsculas
+    const currentPath = location.pathname.toLowerCase().replace(/\/$/, '');
+    
+    // Verificar si la ruta actual está en la lista de rutas de autenticación
+    const shouldHideNavbar = authRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(route + '/')
+    );
+    
+    setShowNavbar(!shouldHideNavbar);
+  }, [location.pathname]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {showNavbar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/tienda" element={<TiendaLujo />} />
+        <Route path="/contacto" element={<Contacto />} />
+        <Route path="/restaurados" element={<TiendaRestaurados />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        
+        {/* Rutas de autenticación */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/recuperacion" element={<Recuperacion />} />
+        <Route path="/recuperacioncodigo" element={<VerifyCode />} />
+        <Route path="/cambiarpassword" element={<CambiarPassword />} />
+      </Routes>
     </>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   )
 }
 
