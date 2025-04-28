@@ -1,7 +1,7 @@
 // Importamos React y los hooks necesarios.
 import React, { useState, useEffect } from 'react';
 import '../components/Home.css'; 
-import Card2 from '../components/card2.jsx'; /
+import Card2 from '../components/card2.jsx'; // Subcomponente reutilizable.
 
 const Home = () => {
   const [windowWidth, setWindowWidth] = useState(window.innerWidth); // Guarda el ancho de la ventana.
