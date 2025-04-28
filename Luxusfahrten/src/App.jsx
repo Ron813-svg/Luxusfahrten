@@ -18,7 +18,7 @@ function App() {
   <main className="main-content">
 
 
-    <AbUs/>
+   
     
   
   </main>
