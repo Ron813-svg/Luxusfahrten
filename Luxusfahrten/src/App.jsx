@@ -1,34 +1,94 @@
-import { useState } from 'react'
-import reactLogo from './assets/react.svg'
-import viteLogo from '/vite.svg'
-import './App.css'
+import { useState, useEffect } from 'react'
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
+import Navbar from './components/Navbar'
+import Login from './screens/Login'
+import Register from './screens/Register'
+import Recuperacion from './screens/Recuperacion'
+import VerifyCode from './screens/RecuperacionCodigo'
+import CambiarPassword from './screens/CambiarPassword'
+import ProductDetail from './screens/Compra';
+import FormularioCompra from './screens/CompraForm';
+import ResumenCompra from './screens/CompraFinal';
+import TermsAndConditions from './screens/TerminosCondiciones';
+import ContactSection from './screens/Contactanos';
+import Footer from './components/footer';
+import InfoCard from './screens/Informacion';
 
-function App() {
-  const [count, setCount] = useState(0)
+
+
+
+//Paginas Principales
+import Home from './screens/Home';
+import TiendaLujo from './screens/TiendaLujo';
+import TiendaRestaurados from './screens/TiendaRestaurados'
+import Nosotros from './screens/Nosotros'
+
+
+<Route path="/" element={<Home />} />;
+<Route path="/" element={<TiendaLujo />} />;
+
+
+
+
+
+function AppContent() {
+  const location = useLocation();
+  const [showNavbar, setShowNavbar] = useState(true);
+  const [showFooter, setShowFooter] = useState(true);
+  // Lista de rutas donde el navbar debe estar oculto
+  const authRoutes = ['/login', '/register', '/recuperacion', '/recuperacioncodigo', '/cambiarpassword'];
+  
+  useEffect(() => {
+    // Obtener la ruta actual sin barras finales y en minúsculas
+    const currentPath = location.pathname.toLowerCase().replace(/\/$/, '');
+    
+    // Verificar si la ruta actual está en la lista de rutas de autenticación
+    const shouldHideNavbar = authRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(route + '/')
+    );
+
+    const shouldHideFooter = authRoutes.some(route => 
+      currentPath === route || currentPath.startsWith(route + '/')
+    );
+    
+    setShowNavbar(!shouldHideNavbar);
+    setShowFooter(!shouldHideFooter);
+  }, [location.pathname]);
 
   return (
     <>
-      <div>
-        <a href="https://vite.dev" target="_blank">
-          <img src={viteLogo} className="logo" alt="Vite logo" />
-        </a>
-        <a href="https://react.dev" target="_blank">
-          <img src={reactLogo} className="logo react" alt="React logo" />
-        </a>
-      </div>
-      <h1>Vite + React</h1>
-      <div className="card">
-        <button onClick={() => setCount((count) => count + 1)}>
-          count is {count}
-        </button>
-        <p>
-          Edit <code>src/App.jsx</code> and save to test HMR
-        </p>
-      </div>
-      <p className="read-the-docs">
-        Click on the Vite and React logos to learn more
-      </p>
+      {showNavbar && <Navbar />}
+      <Routes>
+        <Route path="/" element={<Home />} />
+        <Route path="/tienda" element={<TiendaLujo />} />
+        <Route path="/contacto" element={<ContactSection />} />
+        <Route path="/restaurados" element={<TiendaRestaurados />} />
+        <Route path="/nosotros" element={<Nosotros />} />
+        
+        {/* Rutas de autenticación */}
+        <Route path="/login" element={<Login />} />
+        <Route path="/register" element={<Register />} />
+        <Route path="/recuperacion" element={<Recuperacion />} />
+        <Route path="/recuperacioncodigo" element={<VerifyCode />} />
+        <Route path="/cambiarpassword" element={<CambiarPassword />} />
+        <Route path="/Compra" element={<ProductDetail />} />
+        <Route path="/CompraForm" element={<FormularioCompra />} />
+        <Route path="/CompraFinal" element={<ResumenCompra />} />
+        <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
+        <Route path="/Contactanos" element={<ContactSection />} />
+        <Route path="/Informacion" element={<InfoCard />} />
+      </Routes>
+      {showFooter && <Footer />}
     </>
+  )
+}
+
+function App() {
+  return (
+    <Router>
+      <AppContent />
+    </Router>
   )
 }
 
