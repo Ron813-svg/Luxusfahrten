@@ -1,8 +1,16 @@
-import React from 'react';
+import React, { useState } from 'react';
+import { Link, useNavigate } from 'react-router-dom';
 import './OrderCard.css';
+import OrderModal from '../OrderModal'
 // Esta es la tabla de pedidos, donde se muestran los pedidos y sus detalles
 // Esta tabla es parte de la administración de pedidos y se utiliza para mostrar información sobre los pedidos realizados
 const OrderCard = () => {
+  //Esta parte es para el modal de agregar un pedido
+  const [isModalOpen, setIsModalOpen] = useState(false);
+  const openModal = () => setIsModalOpen(true);
+  const closeModal = () => setIsModalOpen(false);
+
+
   const pedidos = [
     { vehiculo: 'Huayra Roadster', total: '$3,400,000' },
     { vehiculo: 'Chiron', total: '$3,500,000' },
@@ -23,7 +31,7 @@ const OrderCard = () => {
           className="order-card-search"
           placeholder="Buscar pedido..."
         />
-        <button className="order-card-add-button">Agregar</button>
+        <button className="order-card-add-button" onClick={openModal} >Agregar</button>
       </div>
 
       <div className="order-card-table-wrapper">
@@ -55,6 +63,7 @@ const OrderCard = () => {
           </tbody>
         </table>
       </div>
+      {isModalOpen && <OrderModal onClose={closeModal} />}
     </div>
   );
 };

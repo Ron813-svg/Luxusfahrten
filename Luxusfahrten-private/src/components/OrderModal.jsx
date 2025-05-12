@@ -38,7 +38,6 @@ const OrderModal = ({ onClose }) => {
           <label htmlFor="Precio">Precio</label>
           <input
             type="text"
-            className="brand-card-input"
             placeholder="Ingrese el el precio final"
           />
         </div>
