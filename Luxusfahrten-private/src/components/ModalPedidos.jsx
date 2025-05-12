@@ -1,6 +1,7 @@
 import React from "react";
 import "./OrderModal.css";
-
+//Este seria el modal para agregar un pedido
+//El modal tiene un overlay y un contenedor
 const OrderModal = ({ onClose }) => {
   return (
     <div className="order-modal-overlay">
@@ -22,7 +23,7 @@ const OrderModal = ({ onClose }) => {
             <option>Seleccione el cliente</option>
           </select>
         </div>
-
+          
         <div className="order-modal-form-group">
           <label htmlFor="pago">Método de pago</label>
           <input type="text" id="pago" placeholder="Correo electrónico" />
@@ -31,6 +32,15 @@ const OrderModal = ({ onClose }) => {
         <div className="order-modal-form-group">
           <label htmlFor="fecha">Fecha del pedido</label>
           <input type="date" id="fecha" />
+        </div>
+
+        <div className="order-modal-form-group">
+          <label htmlFor="Precio">Precio</label>
+          <input
+            type="text"
+            className="brand-card-input"
+            placeholder="Ingrese el el precio final"
+          />
         </div>
 
         <button className="order-modal-button">Agregar</button>
