@@ -1,0 +1,90 @@
+.order-card-container {
+  background-color: #3a3a3a;
+  padding: 24px;
+  border-radius: 16px;
+  max-width: 1000px;
+  margin: 40px auto;
+  color: white;
+  font-family: sans-serif;
+}
+
+.order-card-header {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  margin-bottom: 24px;
+}
+
+.order-card-search {
+  width: 60%;
+  padding: 8px;
+  border-radius: 6px;
+  border: 1px solid #ccc;
+  background-color: transparent;
+  color: white;
+}
+
+.order-card-add-button {
+  padding: 10px 20px;
+  background-color: #ccc;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.order-card-add-button:hover {
+  background-color: #e0e0e0;
+}
+
+.order-card-table-wrapper {
+  overflow-x: auto;
+}
+
+.order-card-table {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.order-card-table thead {
+  background-color: #ccccd1;
+  color: black;
+}
+
+.order-card-table th,
+.order-card-table td {
+  padding: 12px;
+  text-align: left;
+}
+
+.order-card-table tbody tr {
+  background-color: #4a4a4a;
+  border-bottom: 1px solid #666;
+}
+
+.order-card-update-button {
+  padding: 6px 12px;
+  margin-right: 8px;
+  background-color: white;
+  color: black;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.order-card-update-button:hover {
+  background-color: #ddd;
+}
+
+.order-card-delete-button {
+  padding: 6px 12px;
+  background-color: #944c4c;
+  color: white;
+  border: none;
+  border-radius: 6px;
+  cursor: pointer;
+}
+
+.order-card-delete-button:hover {
+  background-color: #b33c3c;
+}
