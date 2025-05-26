@@ -1,7 +1,7 @@
 import React, { useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import RestauradosCard from './RestauradosCard';
-import useDataVehiculosRes from './useDataVehiculosRes';
+import useDataVehiculosRes from './hooks/useDataVehiculosRes';
 
 const ListRestaurados = () => {
   const { vehiculosRes, fetchData, deleteVehiculoRes, handleUpdateVehiculoRes } = useDataVehiculosRes();
