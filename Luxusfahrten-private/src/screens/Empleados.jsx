@@ -1,85 +1,157 @@
-import React, { useState } from 'react';
+import React, { useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
-import EmpleadoCard from '../components/Empleados/EmpleadoCard';
+import { Toaster } from 'react-hot-toast';
+import useDataModerator from '../components/Empleados/hooks/useDataEmpleado';
+import ListEmpleados from '../components/Empleados/ListEmpleados';
+import RegisterEmpleado from '../components/Empleados/RegisterEmpleado';
 
 const Empleados = () => {
-  const navigate = useNavigate();
-  const [empleados, setEmpleados] = useState([
-    {
-      id: 1,
-      nombre: 'Tony Javier Sánchez Alvarado',
-      correo: 'tony@gmail.com',
-      telefono: '7456-9523',
-      tipoEmpleado: 'Administrador',
-      direccion: 'Colonia Escalón, San Salvador',
-      fechaNacimiento: '1990-05-15',
-      fechaActual: '2023-06-01',
-      imageUrl: 'https://thumbs.dreamstime.com/b/avatar-de-imagen-perfil-predeterminado-icono-usuario-persona-an%C3%B3nimo-iconos-masculino-y-marcador-posici%C3%B3n-fotograf%C3%ADa-hombre-272206807.jpg'
-    },
-    // Puedes agregar más empleados aquí si lo deseas
-  ]);
+  useEffect(() => {
+    document.title = "Empleados";
+  }, []);
 
-  const handleUpdateEmpleado = (id) => {
-    console.log(`Actualizar empleado con ID: ${id}`);
-    // Aquí puedes implementar la lógica para actualizar un empleado
-  };
-
-  const handleDeleteEmpleado = (id) => {
-    if (window.confirm('¿Está seguro que desea eliminar este empleado?')) {
-      setEmpleados(empleados.filter((empleado) => empleado.id !== id));
-    }
-  };
-
-  const handleAgregarClick = () => {
-    navigate('/RegisterEmpleado');
-  };
+  const {
+    activeTab,
+    setActiveTab,
+    id,
+    setId,
+    name,
+    setName,
+    actualDate,
+    setActualDate,
+    birthday,
+    setBirthday,
+    address,
+    setAddress,
+    email,
+    setEmail,
+    password,
+    setPassword,
+    telephone,
+    setTelephone,
+    employeeType,
+    setEmployeeType,
+    image,
+    setImage,
+    errorModerator,
+    setError,
+    success,
+    setSuccess,
+    loading,
+    setLoading,
+    moderators,
+    setModerators,
+    cleanData,
+    handleSubmit,
+    fetchData,
+    deleteModerator,
+    updateModerator,
+    handleUpdate, // Para actualizar datos
+    handleUpdateEmpleado, // Para cargar datos en el formulario
+  } = useDataModerator();
 
   return (
-    <div style={{ backgroundColor: '#9E9E9E', minHeight: '100vh' }}>
-      <div className="container py-5">
-        <div
-          className="card"
-          style={{
-            backgroundColor: '#5a5a5a',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '20px',
-            marginBottom: '20px',
-          }}
-        >
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 className="text-white mb-0">Empleados</h2>
-          </div>
-
-          <div className="row">
-            {empleados.map((empleado) => (
-              <div key={empleado.id} className="col-md-4">
-                <EmpleadoCard
-                  empleado={empleado}
-                  onUpdate={() => handleUpdateEmpleado(empleado.id)}
-                  onDelete={() => handleDeleteEmpleado(empleado.id)}
-                />
-              </div>
-            ))}
-
-            {empleados.length === 0 && (
-              <div className="col-12 text-center py-5 text-white">
-                <p>No hay empleados registrados.</p>
-              </div>
-            )}
-          </div>
-
-          <div className="d-flex justify-content-end mt-3">
-            <button
-              className="btn btn-light"
-              onClick={handleAgregarClick}
+    <div
+      className="min-vh-100 d-flex align-items-center justify-content-center"
+      style={{
+        background: "#9E9E9E",
+        padding: "40px 0",
+      }}
+    >
+      <div
+        className="w-100"
+        style={{
+          maxWidth: "900px",
+        }}
+      >
+  
+    <div
+      className="min-vh-100 d-flex align-items-center justify-content-center"
+      style={{
+        background: "#9E9E9E",
+        padding: "40px 0",
+      }}
+    >
+      <div
+        className="w-100"
+        style={{
+          maxWidth: "900px",
+        }}
+      >
+        {activeTab === "list" && (
+          <div
+            className="shadow-lg"
+            style={{
+              background: "#5a5a5a",
+              border: "none",
+              borderRadius: "1.5rem",
+              boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
+              color: "#fff",
+              padding: "2rem",
+            }}
+          >
+            <h1
+              className="fw-bold mb-4 text-center"
+              style={{
+                color: "#fff",
+                letterSpacing: "2px",
+              }}
             >
-              Agregar
-            </button>
+              Empleados
+            </h1>
+            <div className="d-flex border-bottom mb-4" style={{ borderColor: "#00fff7" }}>
+            </div>
+            <ListEmpleados
+              empleados={moderators}
+              onUpdateEmpleado={handleUpdateEmpleado}
+              onDeleteEmpleado={deleteModerator}
+              loading={loading}
+              setActiveTab={setActiveTab}
+              cleanData={cleanData}
+            />
           </div>
-        </div>
+        )}
+        
+        {activeTab === "form" && (
+          <RegisterEmpleado
+            id={id}
+            name={name}
+            setName={setName}
+            actualDate={actualDate}
+            setActualDate={setActualDate}
+            birthday={birthday}
+            setBirthday={setBirthday}
+            address={address}
+            setAddress={setAddress}
+            email={email}
+            setEmail={setEmail}
+            password={password}
+            setPassword={setPassword}
+            telephone={telephone}
+            setTelephone={setTelephone}
+            employeeType={employeeType}
+            setEmployeeType={setEmployeeType}
+            image={image}
+            setImage={setImage}
+            handleSubmit={id ? handleUpdate : handleSubmit}
+            handleUpdate={handleUpdate}
+            cleanData={cleanData}
+            setActiveTab={setActiveTab}
+          />
+        )}
       </div>
+      <Toaster
+        toastOptions={{
+          duration: 1000,
+        }}
+      />
+    </div>
+      </div>
+      <Toaster
+        toastOptions={{
+          duration: 1000,
+        }}
+      />
     </div>
   );
 };
