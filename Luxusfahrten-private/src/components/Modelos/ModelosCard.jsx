@@ -17,13 +17,13 @@ const ModelCard = ({ model, onUpdate, onDelete }) => {
         <div className="d-flex justify-content-between mt-3">
           <button
             className="btn btn-outline-primary btn-sm"
-            onClick={() => onUpdate(model)}
+            onClick={onUpdate}
           >
             Actualizar
           </button>
           <button
             className="btn btn-outline-danger btn-sm"
-            onClick={() => onDelete(model._id)}
+            onClick={onDelete} // Llamar a la función onDelete
           >
             Eliminar
           </button>

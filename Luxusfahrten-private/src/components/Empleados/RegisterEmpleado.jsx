@@ -24,7 +24,7 @@ const RegisterEmpleado = ({
   image,
   setImage,
   handleSubmit,
-  handleUpdate,
+  handleUpdateEmpleado,
   cleanData,
   setActiveTab
 }) => {
@@ -95,7 +95,7 @@ const RegisterEmpleado = ({
     
     if (id) {
       // Modo edición - usar handleUpdate
-      await handleUpdate(e);
+      await handleUpdateEmpleado(e);
     } else {
       // Modo creación - usar handleSubmit
       await handleSubmit(e);
@@ -123,7 +123,7 @@ const RegisterEmpleado = ({
               <label htmlFor="name" className="form-label text-white">Ingrese su nombre completo</label>
               <input 
                 type="text" 
-                className="form-control bg-dark text-white border-0" 
+                className="form-control bg-white text-xl text-dark border-0" 
                 id="name"
                 name="name"
                 value={name || ''}

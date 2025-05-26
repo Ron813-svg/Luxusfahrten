@@ -1,9 +1,9 @@
-import React, { useEffect } from 'react';
-import 'bootstrap/dist/css/bootstrap.min.css';
-import { Toaster } from 'react-hot-toast';
-import useDataModel from '../components/Modelos/hooks/useDataModelos';
-import ListModelos from '../components/Modelos/ListModelos';
-import RegisterModelos from '../components/Modelos/RegisterModelos';
+import React, { useEffect } from "react";
+import "bootstrap/dist/css/bootstrap.min.css";
+import { Toaster } from "react-hot-toast";
+import useDataModel from "../components/Modelos/hooks/useDataModelos";
+import ListModelos from "../components/Modelos/ListModelos";
+import RegisterModelos from "../components/Modelos/RegisterModelos";
 
 const Modelos = () => {
   useEffect(() => {
@@ -72,11 +72,14 @@ const Modelos = () => {
             >
               Modelos
             </h1>
-            <div className="d-flex border-bottom mb-4" style={{ borderColor: "#00fff7" }}></div>
+            <div
+              className="d-flex border-bottom mb-4"
+              style={{ borderColor: "#00fff7" }}
+            ></div>
             <ListModelos
               models={models}
-              onUpdateModel={handleUpdateModel}
-              onDeleteModel={deleteModel}
+              onUpdateModel={handleUpdateModel} // Pasar la función handleUpdateModel como prop
+              onDeleteModel={deleteModel} // Pasar la función deleteModel como prop
               loading={loading}
               setActiveTab={setActiveTab}
               cleanData={cleanData}
@@ -86,17 +89,17 @@ const Modelos = () => {
 
         {activeTab === "form" && (
           <RegisterModelos
-          id={id}
-          idBrand={idBrand}
-          setIdBrand={setIdBrand}
-          nameModel={nameModel}
-          setNameModel={setNameModel}
-          brands={brands} // Pasar las marcas al formulario
-          fetchBrands={fetchBrands} // Pasar la función para cargar marcas
-          handleSubmit={id ? handleUpdate : handleSubmit}
-          handleUpdate={handleUpdate}
-          cleanData={cleanData}
-          setActiveTab={setActiveTab}
+            id={id}
+            idBrand={idBrand}
+            setIdBrand={setIdBrand}
+            nameModel={nameModel}
+            setNameModel={setNameModel}
+            brands={brands}
+            fetchBrands={fetchBrands}
+            handleSubmit={handleSubmit}
+            handleUpdate={handleUpdateModel}
+            cleanData={cleanData}
+            setActiveTab={setActiveTab}
           />
         )}
       </div>

@@ -1,5 +1,5 @@
-import React from 'react';
-import ModelCard from './ModelosCard';
+import React from "react";
+import ModelCard from "./ModelosCard";
 
 const ListModelos = ({
   models,
@@ -7,12 +7,11 @@ const ListModelos = ({
   onDeleteModel,
   loading,
   setActiveTab,
-  cleanData
+  cleanData,
 }) => {
-
   const handleAddNew = () => {
     cleanData(); // Limpiar datos antes de mostrar el formulario
-    setActiveTab('form'); // Cambiar a la pestaña del formulario
+    setActiveTab("form"); // Cambiar a la pestaña del formulario
   };
 
   return (
@@ -20,12 +19,14 @@ const ListModelos = ({
       <h2 className="text-center fw-bold mb-4" style={{ color: "#fff" }}>
         Listado de Modelos
       </h2>
-      <div style={{
-        backgroundColor: '#5a5a5a',
-        borderRadius: '10px',
-        padding: '20px',
-        color: 'white'
-      }}>
+      <div
+        style={{
+          backgroundColor: "#5a5a5a",
+          borderRadius: "10px",
+          padding: "20px",
+          color: "white",
+        }}
+      >
         <div className="row g-4 justify-content-center">
           {loading && (
             <div className="col-12 text-center py-5">
@@ -33,15 +34,16 @@ const ListModelos = ({
             </div>
           )}
 
-          {models && models.map((model) => (
-            <div key={model._id} className="col-md-4">
-              <ModelCard
-                model={model}
-                onUpdate={() => onUpdateModel(model)}
-                onDelete={() => onDeleteModel(model._id)}
-              />
-            </div>
-          ))}
+          {models &&
+            models.map((model) => (
+              <div key={model._id} className="col-md-4">
+                <ModelCard
+                  model={model}
+                  onUpdate={() => onUpdateModel(model)} // Llama a la función onUpdateModel con el modelo
+                  onDelete={() => onDeleteModel(model._id)} // Llama a la función onDeleteModel con el ID del modelo
+                />
+              </div>
+            ))}
 
           {(!models || models.length === 0) && !loading && (
             <div className="col-12 text-center py-5">
@@ -54,7 +56,7 @@ const ListModelos = ({
           <button
             className="btn btn-light"
             onClick={handleAddNew}
-            style={{ borderRadius: '4px' }}
+            style={{ borderRadius: "4px" }}
           >
             Agregar
           </button>
