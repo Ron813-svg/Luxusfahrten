@@ -267,7 +267,7 @@ const RegisterEmpleado = ({
 
             <div className="mb-3">
               <label htmlFor="password" className="form-label text-white">
-                Contraseña {id && <small>(dejar vacío para no cambiar)</small>}
+                Contraseña {id && <small></small>}
               </label>
               <div className="input-group">
                 <input 
