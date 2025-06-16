@@ -27,8 +27,8 @@ const Modelos = () => {
     setLoading,
     models,
     setModels,
-    brands, // Lista de marcas para el select
-    fetchBrands, // Función para obtener las marcas
+    brands,
+    fetchBrands,
     cleanData,
     handleSubmit,
     fetchData,
@@ -78,8 +78,9 @@ const Modelos = () => {
             ></div>
             <ListModelos
               models={models}
-              onUpdateModel={handleUpdateModel} // Pasar la función handleUpdateModel como prop
-              onDeleteModel={deleteModel} // Pasar la función deleteModel como prop
+              brands={brands} // Pasar brands como prop
+              onUpdateModel={handleUpdateModel}
+              onDeleteModel={deleteModel}
               loading={loading}
               setActiveTab={setActiveTab}
               cleanData={cleanData}
@@ -97,7 +98,7 @@ const Modelos = () => {
             brands={brands}
             fetchBrands={fetchBrands}
             handleSubmit={handleSubmit}
-            handleUpdate={handleUpdateModel}
+            handleUpdate={handleUpdate}
             cleanData={cleanData}
             setActiveTab={setActiveTab}
           />
@@ -105,7 +106,7 @@ const Modelos = () => {
       </div>
       <Toaster
         toastOptions={{
-          duration: 1000,
+          duration: 3000,
         }}
       />
     </div>

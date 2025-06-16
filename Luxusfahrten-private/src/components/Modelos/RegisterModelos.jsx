@@ -1,4 +1,5 @@
 import React, { useEffect } from "react";
+import toast from "react-hot-toast"; // ¡Importación agregada!
 
 const RegisterModelos = ({
   id,
@@ -6,46 +7,55 @@ const RegisterModelos = ({
   setIdBrand,
   nameModel,
   setNameModel,
-  brands, // Lista de marcas obtenida desde la base de datos
-  handleSubmit, // Función para registrar un nuevo modelo
-  handleUpdate, // Función para actualizar un modelo existente
+  brands,
+  handleSubmit,
+  handleUpdate,
   cleanData,
   setActiveTab,
-  fetchBrands, // Función para obtener las marcas desde la base de datos
+  fetchBrands,
 }) => {
-  // Llamar a fetchBrands al montar el componente
+  // Cargar marcas al montar el componente
   useEffect(() => {
     if (fetchBrands) {
-      fetchBrands(); // Llamar a la función para cargar las marcas
+      fetchBrands();
     }
   }, [fetchBrands]);
 
+  // Debug logs
   useEffect(() => {
-    console.log("handleUpdate en RegisterModelos.jsx:", handleUpdate);
-  }, [handleUpdate]);
-
-  useEffect(() => {
-    console.log("Estado actual en RegisterModelos.jsx:");
+    console.log("Estado actual en RegisterModelos:");
     console.log("id:", id);
     console.log("idBrand:", idBrand);
     console.log("nameModel:", nameModel);
-  }, [id, idBrand, nameModel]); // Solo se ejecuta cuando cambian estas dependencias
+  }, [id, idBrand, nameModel]);
 
   const onSubmit = (e) => {
     e.preventDefault();
 
+    console.log("Enviando datos:");
     console.log("idBrand:", idBrand);
     console.log("nameModel:", nameModel);
 
-    if (!idBrand || !nameModel) {
+    // Validación básica
+    if (!idBrand || !nameModel.trim()) {
       toast.error("Todos los campos son obligatorios");
       return;
     }
 
+    const modelData = {
+      idBrand,
+      nameModel: nameModel.trim(),
+    };
+
     if (id) {
-      handleUpdate({ id, idBrand, nameModel }); // Llama a handleUpdate con los datos del modelo
+      // Actualizar modelo existente
+      handleUpdate({ 
+        id, 
+        ...modelData 
+      });
     } else {
-      handleSubmit({ idBrand, nameModel }); // Llama a handleSubmit con los datos del modelo
+      // Crear nuevo modelo
+      handleSubmit(modelData);
     }
   };
 
@@ -70,16 +80,17 @@ const RegisterModelos = ({
       <h2 className="text-center mb-4">
         {id ? "Actualizar Modelo" : "Registrar Modelo"}
       </h2>
+      
       <form onSubmit={onSubmit}>
         <div className="mb-3">
           <label htmlFor="idBrand" className="form-label">
-            Marca
+            Marca *
           </label>
           <select
             id="idBrand"
             className="form-select"
-            value={idBrand || ""} // Mostrar el valor de idBrand desde el estado
-            onChange={(e) => setIdBrand(e.target.value)} // Actualizar el estado al cambiar el valor
+            value={idBrand || ""}
+            onChange={(e) => setIdBrand(e.target.value)}
             required
           >
             <option value="">Seleccione una marca</option>
@@ -91,22 +102,27 @@ const RegisterModelos = ({
               ))}
           </select>
         </div>
+
         <div className="mb-3">
           <label htmlFor="nameModel" className="form-label">
-            Nombre del Modelo
+            Nombre del Modelo *
           </label>
           <input
             type="text"
             id="nameModel"
             className="form-control"
             placeholder="Ingrese el nombre del modelo"
-            value={nameModel || ""} // Mostrar el valor de nameModel desde el estado
-            onChange={(e) => setNameModel(e.target.value)} // Actualizar el estado al cambiar el valor
+            value={nameModel || ""}
+            onChange={(e) => setNameModel(e.target.value)}
             required
           />
         </div>
+
         <div className="d-flex justify-content-between">
-          <button type="submit" className="btn btn-success">
+          <button 
+            type="submit" 
+            className="btn btn-success"
+          >
             {id ? "Actualizar" : "Registrar"}
           </button>
           <button

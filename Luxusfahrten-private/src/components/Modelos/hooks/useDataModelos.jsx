@@ -13,12 +13,14 @@ const useDataModelos = () => {
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
   const [models, setModels] = useState([]);
-  const [brands, setBrands] = useState([]); // Estado para las marcas
+  const [brands, setBrands] = useState([]);
 
   const cleanData = () => {
     setId("");
     setIdBrand("");
     setNameModel("");
+    setError(null);
+    setSuccess(null);
   };
 
   // Obtener modelos
@@ -33,6 +35,7 @@ const useDataModelos = () => {
       setModels(data);
     } catch (error) {
       console.error("Error fetching models:", error);
+      setError("Error al cargar los modelos");
     } finally {
       setLoading(false);
     }
@@ -46,24 +49,30 @@ const useDataModelos = () => {
         throw new Error("Error al obtener las marcas");
       }
       const data = await response.json();
-      setBrands(data); // Guardar las marcas en el estado
+      setBrands(data);
     } catch (error) {
       console.error("Error fetching brands:", error);
+      setError("Error al cargar las marcas");
     }
   };
 
-  // Registrar modelo
-  const handleSubmit = async (e) => {
-    e.preventDefault();
+  // Registrar nuevo modelo
+  const handleSubmit = async (modelData) => {
+    const { idBrand: brandId, nameModel: modelName } = modelData;
 
-    if (!idBrand || !nameModel) {
+    if (!brandId || !modelName) {
       setError("Todos los campos son obligatorios");
       toast.error("Todos los campos son obligatorios");
       return;
     }
 
     try {
-      const body = JSON.stringify({ idBrand, nameModel });
+      setLoading(true);
+      const body = JSON.stringify({ 
+        idBrand: brandId, 
+        nameModel: modelName 
+      });
+      
       const response = await fetch(ApiModels, {
         method: "POST",
         headers: { "Content-Type": "application/json" },
@@ -75,87 +84,87 @@ const useDataModelos = () => {
         throw new Error(errorData.message || "Hubo un error al registrar el modelo");
       }
 
-      toast.success("Modelo registrado");
+      const newModel = await response.json();
+      console.log("Modelo registrado:", newModel);
+      
+      toast.success("Modelo registrado correctamente");
       setSuccess("Modelo registrado correctamente");
       cleanData();
-      fetchData(); // Actualizar la lista de modelos
-      setActiveTab("list"); // Volver a la lista
+      fetchData(); // Actualizar la lista
+      setActiveTab("list");
     } catch (error) {
+      console.error("Error al registrar:", error);
       setError(error.message);
-      toast.error("Ocurrió un error al registrar el modelo");
+      toast.error(error.message || "Error al registrar el modelo");
+    } finally {
+      setLoading(false);
     }
   };
 
-  // Cargar datos para editar
+  // Actualizar modelo existente
   const handleUpdateModel = (model) => {
-    console.log("Cargando datos del modelo:", model);
-  
+    console.log("Cargando datos del modelo para editar:", model);
+    
     setId(model._id);
-    setIdBrand(model.idBrand);
+    setIdBrand(model.idBrand._id || model.idBrand); // Manejar tanto populate como ObjectId
     setNameModel(model.nameModel);
     setActiveTab("form");
   };
 
-  // Cargar datos de la marca para editar
-  const handleUpdateBrand = (brand) => {
-    console.log("Cargando datos de la marca:", brand); // Para debug
-  
-    setId(brand._id); // Establecer el ID de la marca en el estado
-    setBrandName(brand.brandName); // Establecer el nombre de la marca en el estado
-    setError(null); // Limpiar errores previos
-    setSuccess(null); // Limpiar mensajes de éxito previos
-  
-    // Cambiar a la pestaña del formulario
-    setActiveTab("form");
-  };
-  
-  // Actualizar marca
-  const handleUpdate = async (e) => {
-    e.preventDefault();
-  
-    if (!brandName) {
-      setError("El nombre de la marca es obligatorio");
-      toast.error("El nombre de la marca es obligatorio");
+  // Función para actualizar modelo
+  const handleUpdate = async (modelData) => {
+    const { id: modelId, idBrand: brandId, nameModel: modelName } = modelData;
+
+    if (!brandId || !modelName) {
+      setError("Todos los campos son obligatorios");
+      toast.error("Todos los campos son obligatorios");
       return;
     }
-  
+
     try {
-      setLoading(true); // Mostrar indicador de carga
-      const body = JSON.stringify({ brandName });
-      const response = await fetch(`${ApiBrands}/${id}`, {
+      setLoading(true);
+      const body = JSON.stringify({ 
+        idBrand: brandId, 
+        nameModel: modelName 
+      });
+      
+      const response = await fetch(`${ApiModels}/${modelId}`, {
         method: "PUT",
         headers: { "Content-Type": "application/json" },
         body,
       });
-  
+
       if (!response.ok) {
         const errorData = await response.json();
-        throw new Error(errorData.message || "Error al actualizar la marca");
+        throw new Error(errorData.message || "Error al actualizar el modelo");
       }
-  
-      toast.success("Marca actualizada");
-      setSuccess("Marca actualizada correctamente");
-      cleanData(); // Limpiar los datos del formulario
-      setId(""); // Limpiar el ID de la marca
-      setActiveTab("list"); // Volver a la lista de marcas
-      fetchData(); // Actualizar la lista de marcas
+
+      const updatedModel = await response.json();
+      console.log("Modelo actualizado:", updatedModel);
+      
+      toast.success("Modelo actualizado correctamente");
+      setSuccess("Modelo actualizado correctamente");
+      cleanData();
+      fetchData(); // Actualizar la lista
+      setActiveTab("list");
     } catch (error) {
+      console.error("Error al actualizar:", error);
       setError(error.message);
-      toast.error("Error al actualizar la marca");
+      toast.error(error.message || "Error al actualizar el modelo");
     } finally {
-      setLoading(false); // Ocultar indicador de carga
+      setLoading(false);
     }
   };
 
-  useEffect(() => {
-    fetchData();
-    fetchBrands(); // Llamar a fetchBrands para cargar las marcas
-  }, []);
-
   // Eliminar modelo
-  const deleteModel = async (id) => {
+  const deleteModel = async (modelId) => {
+    if (!window.confirm("¿Estás seguro de que deseas eliminar este modelo?")) {
+      return;
+    }
+
     try {
-      const response = await fetch(`${ApiModels}/${id}`, {
+      setLoading(true);
+      const response = await fetch(`${ApiModels}/${modelId}`, {
         method: "DELETE",
       });
 
@@ -163,12 +172,20 @@ const useDataModelos = () => {
         throw new Error("Error al eliminar el modelo");
       }
 
-      toast.success("Modelo eliminado");
-      fetchData(); // Actualizar la lista de modelos
+      toast.success("Modelo eliminado correctamente");
+      fetchData(); // Actualizar la lista
     } catch (error) {
       console.error("Error eliminando el modelo:", error);
+      toast.error("Error al eliminar el modelo");
+    } finally {
+      setLoading(false);
     }
   };
+
+  useEffect(() => {
+    fetchData();
+    fetchBrands();
+  }, []);
 
   return {
     activeTab,
@@ -179,7 +196,7 @@ const useDataModelos = () => {
     setIdBrand,
     nameModel,
     setNameModel,
-    error,
+    errorModel: error, // Mantengo el nombre original para compatibilidad
     setError,
     success,
     setSuccess,
@@ -192,9 +209,8 @@ const useDataModelos = () => {
     cleanData,
     fetchData,
     fetchBrands,
-    handleSubmit, // Ahora está definido
+    handleSubmit,
     handleUpdateModel,
-    handleUpdateBrand,
     handleUpdate,
     deleteModel,
   };
