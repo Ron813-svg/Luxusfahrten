@@ -1,43 +1,6 @@
 import React from 'react';
 
 const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => {
-  if (!empleado) {
-    return <div className="text-center text-gray-500">Cargando...</div>;
-  }
-
-  // Componente para manejar la imagen con fallback
-  const EmpleadoImage = () => {
-    const hasValidImage = empleado.image && empleado.image.trim() !== '';
-    
-    if (hasValidImage) {
-      return (
-        <img 
-          src={empleado.image} 
-          alt={empleado.name}
-          className="img-fluid rounded-circle"
-          style={{ width: '120px', height: '120px', objectFit: 'cover' }}
-          onError={(e) => {
-            // Si la imagen falla al cargar, mostrar placeholder
-            e.target.style.display = 'none';
-            e.target.nextSibling.style.display = 'flex';
-          }}
-        />
-      );
-    }
-    
-    // Placeholder cuando no hay imagen
-    return (
-      <div 
-        className="d-flex justify-content-center align-items-center rounded-circle bg-secondary"
-        style={{ width: '120px', height: '120px' }}
-      >
-        <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-person text-white" viewBox="0 0 16 16">
-          <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-        </svg>
-      </div>
-    );
-  };
-
   return (
     <div className="card mb-4" style={{ 
       maxWidth: '320px', 
@@ -46,47 +9,54 @@ const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => {
       color: 'white' 
     }}>
       <div className="text-center p-3">
-        <EmpleadoImage />
-        {/* Placeholder oculto para casos de error en carga de imagen */}
-        <div 
-          className="d-none justify-content-center align-items-center rounded-circle bg-secondary"
-          style={{ width: '120px', height: '120px' }}
-        >
-          <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-person text-white" viewBox="0 0 16 16">
-            <path d="M8 8a3 3 0 1 0 0-6 3 3 0 0 0 0 6Zm2-3a2 2 0 1 1-4 0 2 2 0 0 1 4 0Zm4 8c0 1-1 1-1 1H3s-1 0-1-1 1-4 6-4 6 3 6 4Zm-1-.004c-.001-.246-.154-.986-.832-1.664C11.516 10.68 10.289 10 8 10c-2.29 0-3.516.68-4.168 1.332-.678.678-.83 1.418-.832 1.664h10Z"/>
-          </svg>
-        </div>
+        <img 
+          src={empleado.image || "https://images.unsplash.com/photo-1472099645785-5658abf4ff4e?w=300&h=300&fit=crop&crop=face"} 
+          alt={empleado.name}
+          className="img-fluid rounded-circle"
+          style={{ 
+            width: '120px', 
+            height: '120px', 
+            objectFit: 'cover',
+            border: '3px solid #00fff7'
+          }}
+        />
       </div>
       
       <div className="p-3">
-        <p className="mb-1"><strong>Nombre:</strong> {empleado.name}</p>
-        <p className="mb-1"><strong>Correo:</strong> {empleado.email}</p>
+        <h5 className="mb-2 text-center" style={{ color: '#00fff7' }}>
+          {empleado.name}
+        </h5>
+        <p className="mb-1"><strong>Puesto:</strong> {empleado.employeeType}</p>
+        <p className="mb-1"><strong>Email:</strong> {empleado.email}</p>
         <p className="mb-1"><strong>Teléfono:</strong> {empleado.telephone}</p>
-        <p className="mb-1"><strong>Tipo Empleado:</strong> {empleado.employeeType}</p>
+        <p className="mb-1"><strong>Fecha de ingreso:</strong> {empleado.actualDate}</p>
+        <p className="mb-3"><strong>Dirección:</strong> {empleado.address}</p>
         
-        <div className="d-flex justify-content-between mt-3">
+        <div className="d-flex justify-content-between">
           <button 
             className="btn text-dark"
-            onClick={() => onUpdate(empleado._id)}
+            onClick={() => onUpdate(empleado)}
             style={{ 
-              backgroundColor: '#e9ecef', 
+              backgroundColor: '#00fff7', 
               borderRadius: '20px', 
-              padding: '6px 12px', 
+              padding: '8px 16px', 
               fontSize: '14px',
-              border: 'none'
+              border: 'none',
+              fontWeight: 'bold'
             }}
           >
             Actualizar
           </button>
           <button 
             className="btn text-white"
-            onClick={() => onDelete(empleado._id)}
+            onClick={() => onDelete(empleado.id)}
             style={{ 
               backgroundColor: '#d9534f', 
               borderRadius: '20px', 
-              padding: '6px 12px', 
+              padding: '8px 16px', 
               fontSize: '14px',
-              border: 'none'
+              border: 'none',
+              fontWeight: 'bold'
             }}
           >
             Eliminar
