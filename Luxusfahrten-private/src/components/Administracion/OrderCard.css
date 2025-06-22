@@ -1,90 +1,92 @@
-.order-card-container {
-  background-color: #3a3a3a;
-  padding: 24px;
-  border-radius: 16px;
-  max-width: 1000px;
-  margin: 40px auto;
-  color: white;
-  font-family: sans-serif;
-}
+/* Estilos adicionales para los nuevos elementos */
 
-.order-card-header {
-  display: flex;
-  justify-content: space-between;
-  align-items: center;
-  margin-bottom: 24px;
-}
-
-.order-card-search {
-  width: 60%;
+.table-select {
+  width: 100%;
   padding: 8px;
-  border-radius: 6px;
-  border: 1px solid #ccc;
-  background-color: transparent;
-  color: white;
-}
-
-.order-card-add-button {
-  padding: 10px 20px;
-  background-color: #ccc;
-  color: black;
-  border: none;
-  border-radius: 6px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  background-color: white;
   cursor: pointer;
 }
 
-.order-card-add-button:hover {
-  background-color: #e0e0e0;
+.table-select:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.order-card-table-wrapper {
-  overflow-x: auto;
-}
-
-.order-card-table {
+.table-date-input {
   width: 100%;
-  border-collapse: collapse;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
 }
 
-.order-card-table thead {
-  background-color: #ccccd1;
-  color: black;
+.table-date-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
 }
 
-.order-card-table th,
-.order-card-table td {
-  padding: 12px;
-  text-align: left;
+.table-total-input {
+  width: 100%;
+  padding: 8px;
+  border: 1px solid #ddd;
+  border-radius: 4px;
+  font-size: 14px;
+  text-align: right;
 }
 
-.order-card-table tbody tr {
-  background-color: #4a4a4a;
-  border-bottom: 1px solid #666;
+.table-total-input:focus {
+  outline: none;
+  border-color: #007bff;
+  box-shadow: 0 0 0 2px rgba(0, 123, 255, 0.25);
+}
+
+/* Mejorar el espaciado de los botones */
+.order-card-update-button,
+.order-card-delete-button {
+  margin: 2px;
+  padding: 6px 12px;
+  border: none;
+  border-radius: 4px;
+  cursor: pointer;
+  font-size: 12px;
+  transition: background-color 0.2s;
 }
 
 .order-card-update-button {
-  padding: 6px 12px;
-  margin-right: 8px;
-  background-color: white;
-  color: black;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
+  background-color: #28a745;
+  color: white;
 }
 
 .order-card-update-button:hover {
-  background-color: #ddd;
+  background-color: #218838;
 }
 
 .order-card-delete-button {
-  padding: 6px 12px;
-  background-color: #944c4c;
+  background-color: #dc3545;
   color: white;
-  border: none;
-  border-radius: 6px;
-  cursor: pointer;
 }
 
 .order-card-delete-button:hover {
-  background-color: #b33c3c;
+  background-color: #c82333;
+}
+
+/* Responsividad para elementos de tabla */
+@media (max-width: 768px) {
+  .table-select,
+  .table-date-input,
+  .table-total-input {
+    font-size: 12px;
+    padding: 4px;
+  }
+  
+  .order-card-update-button,
+  .order-card-delete-button {
+    font-size: 10px;
+    padding: 4px 8px;
+  }
 }
