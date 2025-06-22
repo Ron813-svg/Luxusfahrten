@@ -1,491 +1,343 @@
-import React from 'react';
+import React, { useState, useEffect } from 'react';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { useNavigate } from 'react-router-dom';
 
-// Utilidades para manejo de imágenes
-const resizeImage = (file, maxWidth = 300, maxHeight = 300, quality = 0.8) => {
-  return new Promise((resolve) => {
-    const canvas = document.createElement('canvas');
-    const ctx = canvas.getContext('2d');
-    const img = new Image();
-
-    img.onload = () => {
-      let { width, height } = img;
-      
-      if (width > height) {
-        if (width > maxWidth) {
-          height = (height * maxWidth) / width;
-          width = maxWidth;
-        }
-      } else {
-        if (height > maxHeight) {
-          width = (width * maxHeight) / height;
-          height = maxHeight;
-        }
-      }
-
-      canvas.width = width;
-      canvas.height = height;
-      ctx.drawImage(img, 0, 0, width, height);
-      
-      const resizedBase64 = canvas.toDataURL('image/jpeg', quality);
-      resolve(resizedBase64);
-    };
-
-    img.src = URL.createObjectURL(file);
-  });
-};
-
-const RegisterEmpleado = ({ 
-  formData, 
-  setFormData, 
-  handleSubmit, 
-  cleanData, 
-  setActiveTab, 
-  loading 
+const RegisterEmpleado = ({
+  // Props del hook principal
+  id,
+  name,
+  setName,
+  actualDate,
+  setActualDate,
+  birthday,
+  setBirthday,
+  address,
+  setAddress,
+  email,
+  setEmail,
+  password,
+  setPassword,
+  telephone,
+  setTelephone,
+  employeeType,
+  setEmployeeType,
+  image,
+  setImage,
+  handleSubmit,
+  handleUpdate,
+  cleanData,
+  setActiveTab
 }) => {
+  const navigate = useNavigate();
 
-  const handleInputChange = (e) => {
-    const { name, value } = e.target;
-    setFormData(prev => ({
-      ...prev,
-      [name]: value
-    }));
+  const [showPassword, setShowPassword] = useState(false);
+  const [imagenPreview, setImagenPreview] = useState(null);
+
+  // Efecto para manejar la preview de la imagen
+  useEffect(() => {
+    if (image && typeof image === 'string') {
+      setImagenPreview(image);
+    }
+  }, [image]);
+
+  const handleChange = (e) => {
+    const { name: fieldName, value } = e.target;
+    
+    // Usar los setters del hook principal en lugar del estado local
+    switch(fieldName) {
+      case 'name':
+        setName(value);
+        break;
+      case 'actualDate':
+        setActualDate(value);
+        break;
+      case 'birthday':
+        setBirthday(value);
+        break;
+      case 'address':
+        setAddress(value);
+        break;
+      case 'email':
+        setEmail(value);
+        break;
+      case 'password':
+        setPassword(value);
+        break;
+      case 'telephone':
+        setTelephone(value);
+        break;
+      case 'employeeType':
+        setEmployeeType(value);
+        break;
+      default:
+        break;
+    }
   };
 
-  // Función para manejar la subida de imágenes
-  const handleImageChange = async (e) => {
+  const handleImageChange = (e) => {
     const file = e.target.files[0];
-    if (!file) return;
-
-    // Validar archivo
-    if (!file.type.startsWith('image/')) {
-      alert('Por favor selecciona un archivo de imagen válido');
-      return;
-    }
-
-    if (file.size > 5 * 1024 * 1024) {
-      alert('La imagen es demasiado grande. Máximo 5MB');
-      return;
-    }
-
-    try {
-      // Mostrar loading
-      setFormData(prev => ({ ...prev, imageLoading: true }));
-      
-      // Redimensionar imagen para optimizar
-      const resizedImage = await resizeImage(file, 300, 300, 0.8);
-      
-      setFormData(prev => ({
-        ...prev,
-        image: resizedImage,
-        imageLoading: false
-      }));
-    } catch (error) {
-      console.error('Error al procesar la imagen:', error);
-      alert('Error al procesar la imagen');
-      setFormData(prev => ({ ...prev, imageLoading: false }));
+    if (file) {
+      setImage(file);
+      const reader = new FileReader();
+      reader.onloadend = () => {
+        setImagenPreview(reader.result);
+      };
+      reader.readAsDataURL(file);
     }
   };
 
-  // Función para remover imagen
-  const removeImage = () => {
-    setFormData(prev => ({
-      ...prev,
-      image: ""
-    }));
-    // Limpiar el input file
-    const fileInput = document.getElementById('imageFile');
-    if (fileInput) fileInput.value = '';
+  const togglePasswordVisibility = () => {
+    setShowPassword(!showPassword);
+  };
+
+  const onSubmit = async (e) => {
+    e.preventDefault();
+    
+    if (id) {
+      // Modo edición - usar handleUpdate
+      await handleUpdate(e);
+    } else {
+      // Modo creación - usar handleSubmit
+      await handleSubmit(e);
+    }
   };
 
   const handleCancel = () => {
     cleanData();
-    setActiveTab("list");
+    if (setActiveTab) {
+      setActiveTab('list');
+    } else {
+      navigate('/empleados');
+    }
   };
 
-  const tiposEmpleado = [
-    "Vendedor",
-    "Gerente", 
-    "Mecánico",
-    "Contador",
-    "Recepcionista",
-    "Supervisor"
-  ];
-
   return (
-    <div
-      className="shadow-lg"
-      style={{
-        background: "#5a5a5a",
-        border: "none",
-        borderRadius: "1.5rem",
-        boxShadow: "0 8px 32px 0 rgba(31, 38, 135, 0.37)",
-        color: "#fff",
-        padding: "2rem",
-      }}
-    >
-      <div className="d-flex justify-content-between align-items-center mb-4">
-        <h1
-          className="fw-bold"
-          style={{
-            color: "#00fff7",
-            letterSpacing: "2px",
-          }}
-        >
-          {formData.id ? "Editar Empleado" : "Registrar Empleado"}
-        </h1>
-        <button
-          type="button"
-          className="btn btn-outline-light"
-          onClick={handleCancel}
-          style={{ borderRadius: "20px" }}
-        >
-          ← Volver
-        </button>
-      </div>
-
-      <form onSubmit={handleSubmit}>
+    <div className="container p-4" style={{ backgroundColor: '#5a5a5a', borderRadius: '10px', maxWidth: '900px' }}>
+      <h3 className="text-white text-center mb-4">
+        {id ? 'Actualizar Empleado' : 'Registrar Empleado'}
+      </h3>
+      <form onSubmit={onSubmit} encType="multipart/form-data">
         <div className="row">
-          {/* Nombre completo */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Nombre Completo *
-            </label>
-            <input
-              type="text"
-              name="name"
-              className="form-control"
-              value={formData.name}
-              onChange={handleInputChange}
-              required
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-              placeholder="Ingresa el nombre completo"
-            />
-          </div>
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label htmlFor="name" className="form-label text-white">Ingrese su nombre completo</label>
+              <input 
+                type="text" 
+                className="form-control bg-dark text-white border-0" 
+                id="name"
+                name="name"
+                value={name || ''}
+                onChange={handleChange}
+                placeholder="Nombre"
+                required
+                style={{ height: '40px' }}
+              />
+            </div>
 
-          {/* Email */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Email *
-            </label>
-            <input
-              type="email"
-              name="email"
-              className="form-control"
-              value={formData.email}
-              onChange={handleInputChange}
-              required
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-              placeholder="correo@ejemplo.com"
-            />
-          </div>
-
-          {/* Teléfono */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Teléfono *
-            </label>
-            <input
-              type="tel"
-              name="telephone"
-              className="form-control"
-              value={formData.telephone}
-              onChange={handleInputChange}
-              required
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-              placeholder="7890-1234"
-            />
-          </div>
-
-          {/* Tipo de empleado */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Puesto
-            </label>
-            <select
-              name="employeeType"
-              className="form-select"
-              value={formData.employeeType}
-              onChange={handleInputChange}
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-            >
-              {tiposEmpleado.map(tipo => (
-                <option key={tipo} value={tipo} style={{ backgroundColor: '#5a5a5a', color: 'white' }}>
-                  {tipo}
-                </option>
-              ))}
-            </select>
-          </div>
-
-          {/* Fecha de nacimiento */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Fecha de Nacimiento
-            </label>
-            <input
-              type="date"
-              name="birthday"
-              className="form-control"
-              value={formData.birthday}
-              onChange={handleInputChange}
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-            />
-          </div>
-
-          {/* Fecha de ingreso */}
-          <div className="col-md-6 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Fecha de Ingreso
-            </label>
-            <input
-              type="date"
-              name="actualDate"
-              className="form-control"
-              value={formData.actualDate}
-              onChange={handleInputChange}
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-            />
-          </div>
-
-          {/* Dirección */}
-          <div className="col-12 mb-3">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Dirección
-            </label>
-            <textarea
-              name="address"
-              className="form-control"
-              rows="2"
-              value={formData.address}
-              onChange={handleInputChange}
-              style={{
-                backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                border: '1px solid #00fff7',
-                color: 'white',
-                borderRadius: '10px'
-              }}
-              placeholder="Dirección completa del empleado"
-            />
-          </div>
-
-          {/* Sección de imagen */}
-          <div className="col-12 mb-4">
-            <label className="form-label" style={{ color: '#00fff7' }}>
-              Foto del Empleado
-            </label>
-            
-            {/* Preview de la imagen */}
-            <div className="text-center mb-3">
-              <div 
-                className="d-inline-block position-relative"
-                style={{
-                  width: '150px',
-                  height: '150px',
-                  border: '2px dashed #00fff7',
-                  borderRadius: '50%',
-                  overflow: 'hidden',
-                  backgroundColor: 'rgba(0, 255, 247, 0.1)'
-                }}
-              >
-                {formData.image ? (
-                  <>
-                    <img
-                      src={formData.image}
-                      alt="Preview"
-                      style={{
-                        width: '100%',
-                        height: '100%',
-                        objectFit: 'cover'
-                      }}
-                    />
-                    <button
-                      type="button"
-                      onClick={removeImage}
-                      className="btn btn-danger btn-sm position-absolute"
-                      style={{
-                        top: '5px',
-                        right: '5px',
-                        borderRadius: '50%',
-                        width: '30px',
-                        height: '30px',
-                        padding: '0',
-                        fontSize: '12px',
-                        zIndex: 10
-                      }}
-                      title="Remover imagen"
-                    >
-                      ×
-                    </button>
-                  </>
-                ) : formData.imageLoading ? (
-                  <div className="d-flex flex-column justify-content-center align-items-center h-100">
-                    <div className="spinner-border text-info mb-2" role="status">
-                      <span className="visually-hidden">Procesando...</span>
-                    </div>
-                    <small style={{ color: '#00fff7' }}>Procesando imagen...</small>
-                  </div>
-                ) : (
-                  <div className="d-flex flex-column justify-content-center align-items-center h-100">
-                    <svg
-                      width="40"
-                      height="40"
-                      fill="#00fff7"
-                      viewBox="0 0 24 24"
-                      className="mb-2"
-                    >
-                      <path d="M12 12c2.21 0 4-1.79 4-4s-1.79-4-4-4-4 1.79-4 4 1.79 4 4 4zm0 2c-2.67 0-8 1.34-8 4v2h16v-2c0-2.66-5.33-4-8-4z"/>
-                    </svg>
-                    <small style={{ color: '#00fff7' }}>Click para agregar foto</small>
-                  </div>
-                )}
+            <div className="mb-3">
+              <label htmlFor="birthday" className="form-label text-white">Fecha de nacimiento</label>
+              <div className="input-group">
+                <input 
+                  type="date" 
+                  className="form-control bg-dark text-white border-0" 
+                  id="birthday"
+                  name="birthday"
+                  value={birthday || ''}
+                  onChange={handleChange}
+                  required
+                  style={{ height: '40px' }}
+                />
+                <span className="input-group-text bg-dark text-white border-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-calendar" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                  </svg>
+                </span>
               </div>
             </div>
 
-            {/* Input para subir archivo */}
             <div className="mb-3">
-              <div className="d-flex align-items-center gap-3">
-                <label 
-                  htmlFor="imageFile" 
-                  className="btn btn-outline-info"
+              <label htmlFor="email" className="form-label text-white">Correo</label>
+              <input 
+                type="email" 
+                className="form-control bg-dark text-white border-0" 
+                id="email"
+                name="email"
+                value={email || ''}
+                onChange={handleChange}
+                placeholder="Correo electrónico"
+                required
+                style={{ height: '40px' }}
+              />
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="telephone" className="form-label text-white">Teléfono</label>
+              <input 
+                type="tel" 
+                className="form-control bg-dark text-white border-0" 
+                id="telephone"
+                name="telephone"
+                value={telephone || ''}
+                onChange={handleChange}
+                placeholder="Teléfono celular"
+                required
+                style={{ height: '40px' }}
+              />
+            </div>
+
+            <div className="mb-3 mt-4">
+              <div className="d-flex">
+                <div 
                   style={{
-                    borderColor: '#00fff7',
-                    color: '#00fff7',
-                    borderRadius: '20px',
-                    cursor: 'pointer'
+                    width: '150px',
+                    height: '150px',
+                    border: '1px solid #ccc',
+                    display: 'flex',
+                    justifyContent: 'center',
+                    alignItems: 'center',
+                    marginRight: '10px',
+                    background: '#444',
+                    borderRadius: '50%'
                   }}
                 >
-                  📁 Seleccionar desde computadora
-                </label>
-                <input
-                  type="file"
-                  id="imageFile"
-                  accept="image/*"
+                  {imagenPreview ? (
+                    <img 
+                      src={imagenPreview} 
+                      alt="Vista previa" 
+                      style={{ maxWidth: '100%', maxHeight: '100%', borderRadius: '50%' }} 
+                    />
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-camera text-white" viewBox="0 0 16 16">
+                      <path d="M15 12a1 1 0 0 1-1 1H2a1 1 0 0 1-1-1V6a1 1 0 0 1 1-1h1.172a3 3 0 0 0 2.12-.879l.83-.828A1 1 0 0 1 6.827 3h2.344a1 1 0 0 1 .707.293l.828.828A3 3 0 0 0 12.828 5H14a1 1 0 0 1 1 1zM2 4a2 2 0 0 0-2 2v6a2 2 0 0 0 2 2h12a2 2 0 0 0 2-2V6a2 2 0 0 0-2-2h-1.172a2 2 0 0 1-1.414-.586l-.828-.828A2 2 0 0 0 9.172 2H6.828a2 2 0 0 0-1.414.586l-.828.828A2 2 0 0 1 3.172 4z"/>
+                      <path d="M8 11a2.5 2.5 0 1 1 0-5 2.5 2.5 0 0 1 0 5m0 1a3.5 3.5 0 1 0 0-7 3.5 3.5 0 0 0 0 7M3 6.5a.5.5 0 1 1-1 0 .5.5 0 0 1 1 0"/>
+                    </svg>
+                  )}
+                </div>
+                <input 
+                  type="file" 
+                  className="d-none" 
+                  id="image" 
+                  name="image"
                   onChange={handleImageChange}
-                  style={{ display: 'none' }}
+                  accept="image/*"
                 />
-                {formData.image && (
-                  <button
-                    type="button"
-                    onClick={removeImage}
-                    className="btn btn-outline-danger btn-sm"
-                    style={{ borderRadius: '20px' }}
-                  >
-                    🗑️ Quitar imagen
-                  </button>
-                )}
+                <label htmlFor="image" className="btn btn-outline-light" style={{ height: '40px', lineHeight: '28px' }}>
+                  {id ? 'Cambiar' : 'Añadir'}
+                </label>
               </div>
-              <small className="text-muted d-block mt-2">
-                📋 Formatos: JPG, PNG, GIF, WebP • Máximo: 5MB • Se optimizará automáticamente
-              </small>
-            </div>
-
-            {/* Opción alternativa con URL */}
-            <div className="mt-3">
-              <label className="form-label" style={{ color: '#888' }}>
-                O ingresa una URL de imagen:
-              </label>
-              <input
-                type="url"
-                name="image"
-                className="form-control"
-                value={formData.image && !formData.image.startsWith('data:') ? formData.image : ''}
-                onChange={handleInputChange}
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid #666',
-                  color: 'white',
-                  borderRadius: '10px'
-                }}
-                placeholder="https://ejemplo.com/foto.jpg"
-              />
             </div>
           </div>
+          
+          <div className="col-md-6">
+            <div className="mb-3">
+              <label htmlFor="actualDate" className="form-label text-white">Fecha actual</label>
+              <div className="input-group">
+                <input 
+                  type="date" 
+                  className="form-control bg-dark text-white border-0" 
+                  id="actualDate"
+                  name="actualDate"
+                  value={actualDate || ''}
+                  onChange={handleChange}
+                  required
+                  style={{ height: '40px' }}
+                />
+                <span className="input-group-text bg-dark text-white border-0">
+                  <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-calendar" viewBox="0 0 16 16">
+                    <path d="M3.5 0a.5.5 0 0 1 .5.5V1h8V.5a.5.5 0 0 1 1 0V1h1a2 2 0 0 1 2 2v11a2 2 0 0 1-2 2H2a2 2 0 0 1-2-2V3a2 2 0 0 1 2-2h1V.5a.5.5 0 0 1 .5-.5zM1 4v10a1 1 0 0 0 1 1h12a1 1 0 0 0 1-1V4H1z"/>
+                  </svg>
+                </span>
+              </div>
+            </div>
 
-          {/* Contraseña solo para nuevos empleados */}
-          {!formData.id && (
-            <div className="col-12 mb-3">
-              <label className="form-label" style={{ color: '#00fff7' }}>
-                Contraseña *
-              </label>
-              <input
-                type="password"
-                name="password"
-                className="form-control"
-                value={formData.password}
-                onChange={handleInputChange}
-                required={!formData.id}
-                style={{
-                  backgroundColor: 'rgba(255, 255, 255, 0.1)',
-                  border: '1px solid #00fff7',
-                  color: 'white',
-                  borderRadius: '10px'
-                }}
-                placeholder="Contraseña para el empleado"
+            <div className="mb-3">
+              <label htmlFor="address" className="form-label text-white">Dirección</label>
+              <input 
+                type="text" 
+                className="form-control bg-dark text-white border-0" 
+                id="address"
+                name="address"
+                value={address || ''}
+                onChange={handleChange}
+                placeholder="Dirección"
+                required
+                style={{ height: '40px' }}
               />
             </div>
-          )}
-        </div>
 
-        {/* Botones */}
-        <div className="d-flex justify-content-end gap-3 mt-4">
+            <div className="mb-3">
+              <label htmlFor="password" className="form-label text-white">
+                Contraseña {id && <small>(dejar vacío para no cambiar)</small>}
+              </label>
+              <div className="input-group">
+                <input 
+                  type={showPassword ? "text" : "password"} 
+                  className="form-control bg-dark text-white border-0" 
+                  id="password"
+                  name="password"
+                  value={password || ''}
+                  onChange={handleChange}
+                  placeholder="Contraseña"
+                  required={!id} // Solo requerido en modo creación
+                  style={{ height: '40px' }}
+                />
+                <button 
+                  className="btn btn-outline-secondary bg-dark text-white border-0" 
+                  type="button"
+                  onClick={togglePasswordVisibility}
+                >
+                  {showPassword ? (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash" viewBox="0 0 16 16">
+                      <path d="M13.359 11.238C15.06 9.72 16 8 16 8s-3-5.5-8-5.5a7.028 7.028 0 0 0-2.79.588l.77.771A5.944 5.944 0 0 1 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.134 13.134 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755-.165.165-.337.328-.517.486l.708.709z"/>
+                      <path d="M11.297 9.176a3.5 3.5 0 0 0-4.474-4.474l.823.823a2.5 2.5 0 0 1 2.829 2.829l.822.822zm-2.943 1.299.822.822a3.5 3.5 0 0 1-4.474-4.474l.823.823a2.5 2.5 0 0 0 2.829 2.829z"/>
+                      <path d="M3.35 5.47c-.18.16-.353.322-.518.487A13.134 13.134 0 0 0 1.172 8l.195.288c.335.48.83 1.12 1.465 1.755C4.121 11.332 5.881 12.5 8 12.5c.716 0 1.39-.133 2.02-.36l.77.772A7.029 7.029 0 0 1 8 13.5C3 13.5 0 8 0 8s.939-1.721 2.641-3.238l.708.709zm10.296 8.884-12-12 .708-.708 12 12-.708.708z"/>
+                    </svg>
+                  ) : (
+                    <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye" viewBox="0 0 16 16">
+                      <path d="M16 8s-3-5.5-8-5.5S0 8 0 8s3 5.5 8 5.5S16 8 16 8zM1.173 8a13.133 13.133 0 0 1 1.66-2.043C4.12 4.668 5.88 3.5 8 3.5c2.12 0 3.879 1.168 5.168 2.457A13.133 13.133 0 0 1 14.828 8c-.058.087-.122.183-.195.288-.335.48-.83 1.12-1.465 1.755C11.879 11.332 10.119 12.5 8 12.5c-2.12 0-3.879-1.168-5.168-2.457A13.134 13.134 0 0 1 1.172 8z"/>
+                      <path d="M8 5.5a2.5 2.5 0 1 0 0 5 2.5 2.5 0 0 0 0 5zM4.5 8a3.5 3.5 0 1 1 7 0 3.5 3.5 0 0 1-7 0z"/>
+                    </svg>
+                  )}
+                </button>
+              </div>
+            </div>
+
+            <div className="mb-3">
+              <label htmlFor="employeeType" className="form-label text-white">Tipo de empleado</label>
+              <select 
+                className="form-select bg-dark text-white border-0" 
+                id="employeeType"
+                name="employeeType"
+                value={employeeType || ''}
+                onChange={handleChange}
+                required
+                style={{ height: '40px' }}
+              >
+                <option value="" disabled>Tipo de empleado</option>
+                <option value="Administrador">Administrador</option>
+                <option value="Ventas">Ventas</option>
+                <option value="Mecánico">Mecánico</option>
+                <option value="Atención al cliente">Atención al cliente</option>
+              </select>
+            </div>
+          </div>
+        </div>
+        
+        <div className="d-flex justify-content-between mt-3">
           <button
             type="button"
-            className="btn btn-outline-light"
+            className="btn btn-secondary"
             onClick={handleCancel}
-            disabled={loading}
-            style={{ borderRadius: "20px", padding: "10px 25px" }}
+            style={{ width: '150px', height: '40px' }}
           >
             Cancelar
           </button>
           <button
             type="submit"
-            className="btn fw-bold"
-            disabled={loading}
-            style={{
-              backgroundColor: '#00fff7',
-              color: '#000',
-              borderRadius: '20px',
-              padding: '10px 25px',
-              border: 'none'
-            }}
+            className="btn btn-light"
+            style={{ width: '200px', height: '40px' }}
           >
-            {loading ? (
-              <>
-                <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
-                {formData.id ? "Actualizando..." : "Guardando..."}
-              </>
-            ) : (
-              formData.id ? "Actualizar Empleado" : "Registrar Empleado"
-            )}
+            {id ? 'Actualizar' : 'Agregar'}
           </button>
         </div>
       </form>
