@@ -134,7 +134,7 @@ const Empleados = () => {
             image={image}
             setImage={setImage}
             handleSubmit={id ? handleUpdate : handleSubmit}
-            handleUpdate={handleUpdate}
+            handleUpdateEmpleado={handleUpdate}
             cleanData={cleanData}
             setActiveTab={setActiveTab}
           />

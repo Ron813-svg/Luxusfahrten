@@ -9,19 +9,50 @@ const CambiarPassword = () => {
   const [isValid, setIsValid] = useState(false);
   const [showPassword, setShowPassword] = useState(false);
   const [showConfirmPassword, setShowConfirmPassword] = useState(false);
+  const [loading, setLoading] = useState(false);
+  const [error, setError] = useState('');
+  const [success, setSuccess] = useState(false);
 
   useEffect(() => {
-    // Validar que ambos campos tengan contenido y sean iguales
     setIsValid(password.length >= 8 && password === confirmPassword);
   }, [password, confirmPassword]);
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    if (isValid) {
-      console.log('Cambiando contraseña a:', password);
-      // Aquí iría la lógica para cambiar la contraseña
-      // Después, redirigir al login
-      navigate('/Login/');
+    
+    if (!isValid) {
+      setError('Las contraseñas deben coincidir y tener al menos 8 caracteres');
+      return;
+    }
+
+    setLoading(true);
+    setError('');
+
+    try {
+      const response = await fetch(`http://localhost:4000/api/passRecov/resetPassword`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include',
+        body: JSON.stringify({ password }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setSuccess(true);
+        setTimeout(() => {
+          navigate('/Login/');
+        }, 3000);
+      } else {
+        setError(data.message || 'Error al cambiar contraseña');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -32,6 +63,25 @@ const CambiarPassword = () => {
   const toggleConfirmPasswordVisibility = () => {
     setShowConfirmPassword(!showConfirmPassword);
   };
+
+  if (success) {
+    return (
+      <div className="container-fluid d-flex justify-content-center align-items-center vh-100" style={{ backgroundColor: '#333' }}>
+        <div className="card shadow-sm" style={{ maxWidth: '320px', width: '90%', backgroundColor: '#5a5a5a', color: 'white' }}>
+          <div className="card-body p-4 text-center">
+            <div className="mb-3">
+              <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-check-circle text-success" viewBox="0 0 16 16">
+                <path d="M8 15A7 7 0 1 1 8 1a7 7 0 0 1 0 14zm0 1A8 8 0 1 0 8 0a8 8 0 0 0 0 16z"/>
+                <path d="M10.97 4.97a.235.235 0 0 0-.02.022L7.477 9.417 5.384 7.323a.75.75 0 0 0-1.06 1.06L6.97 11.03a.75.75 0 0 0 1.079-.02l3.992-4.99a.75.75 0 0 0-1.071-1.05z"/>
+              </svg>
+            </div>
+            <h5 className="text-success">¡Contraseña actualizada!</h5>
+            <p className="small text-white-50">Tu contraseña ha sido cambiada exitosamente. Serás redirigido al login en unos segundos.</p>
+          </div>
+        </div>
+      </div>
+    );
+  }
 
   return (
     <div className="container-fluid d-flex justify-content-center align-items-center vh-100" style={{ backgroundColor: '#333' }}>
@@ -47,11 +97,17 @@ const CambiarPassword = () => {
                 <path d="M8 1a2 2 0 0 1 2 2v4H6V3a2 2 0 0 1 2-2zm3 6V3a3 3 0 0 0-6 0v4a2 2 0 0 0-2 2v5a2 2 0 0 0 2 2h6a2 2 0 0 0 2-2V9a2 2 0 0 0-2-2zM5 8h6a1 1 0 0 1 1 1v5a1 1 0 0 1-1 1H5a1 1 0 0 1-1-1V9a1 1 0 0 1 1-1z"/>
               </svg>
             </div>
-            <h5 className="mb-2">Cambiar contraseña</h5>
+            <h5 className="mb-2">Nueva contraseña</h5>
             <p className="small text-white-50 mb-3">
               La contraseña debe tener al menos 8 caracteres.
             </p>
           </div>
+
+          {error && (
+            <div className="alert alert-danger text-center py-2 small mb-3">
+              {error}
+            </div>
+          )}
           
           <form onSubmit={handleSubmit}>
             <div className="mb-3">
@@ -64,11 +120,13 @@ const CambiarPassword = () => {
                   placeholder="Contraseña nueva"
                   required
                   minLength="8"
+                  disabled={loading}
                 />
                 <button 
                   className="btn btn-outline-secondary" 
                   type="button"
                   onClick={togglePasswordVisibility}
+                  disabled={loading}
                 >
                   {showPassword ? (
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -96,11 +154,13 @@ const CambiarPassword = () => {
                   placeholder="Repetir contraseña nueva"
                   required
                   minLength="8"
+                  disabled={loading}
                 />
                 <button 
                   className="btn btn-outline-secondary" 
                   type="button"
                   onClick={toggleConfirmPasswordVisibility}
+                  disabled={loading}
                 >
                   {showConfirmPassword ? (
                     <svg xmlns="http://www.w3.org/2000/svg" width="16" height="16" fill="currentColor" className="bi bi-eye-slash" viewBox="0 0 16 16">
@@ -121,13 +181,13 @@ const CambiarPassword = () => {
             <button 
               type="submit" 
               className="btn btn-light w-100 mt-2"
-              disabled={!isValid}
+              disabled={!isValid || loading}
               style={{
-                opacity: isValid ? 1 : 0.6,
-                cursor: isValid ? 'pointer' : 'not-allowed'
+                opacity: (isValid && !loading) ? 1 : 0.6,
+                cursor: (isValid && !loading) ? 'pointer' : 'not-allowed'
               }}
             >
-              Confirmar
+              {loading ? 'Cambiando...' : 'Confirmar'}
             </button>
           </form>
         </div>

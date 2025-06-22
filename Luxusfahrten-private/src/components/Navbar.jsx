@@ -1,12 +1,32 @@
 import React, { useState } from "react";
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { Link } from "react-router-dom";
-import LogoutIcon from '@mui/icons-material/Logout';
+import { useAuth } from "../context/AuthContext";
+import { useNavigate } from "react-router-dom";
 
 const Navbar = () => {
     const [isNavCollapsed, setIsNavCollapsed] = useState(true);
+    const navigate = useNavigate();
+    const { logout, authCokie } = useAuth();
 
     const handleNavCollapse = () => setIsNavCollapsed(!isNavCollapsed);
+
+    const handleLogout = async () => {
+        try {
+            await fetch('http://localhost:4000/api/logout', {
+                method: 'POST',
+                credentials: 'include'
+            });
+        } catch (error) {
+            console.error("Error al hacer logout:", error);
+        } finally {
+            logout();
+            navigate('/login');
+        }
+    };
+
+    // Si no hay sesión, no mostrar el Navbar
+    if (!authCokie) return null;
 
     return (
         <nav className="text-white" style={{ backgroundColor: 'rgb(90, 90, 90)' }}>
@@ -42,7 +62,7 @@ const Navbar = () => {
                     
                     {/* Logo siempre visible */}
                     <div className="text-center">
-                        <Link to="/PantallaPrincipal/" className="navbar-brand">
+                        <Link to="/pantallaprincipal" className="navbar-brand">
                             <h1 style={{ fontFamily: '"Playfair Display", serif', letterSpacing: '1px', fontSize: '1.75rem', margin: 0 }}>
                                 LUXUSFAHRTEN
                             </h1>
@@ -63,31 +83,37 @@ const Navbar = () => {
                             </Link>
                         </div>
                         
-                        {/* Botón de login siempre visible */}
-                        <Link to="/login" className="ms-lg-3">
-                            
-                        <link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet" />
-      <span className="material-symbols-outlined" style={{ color: 'white' }}>logout</span>
-
-
-                        </Link>
+                        {/* Botón de logout */}
+                        <button 
+                            onClick={handleLogout}
+                            className="btn btn-link ms-lg-3 p-0"
+                            style={{ border: 'none', background: 'none' }}
+                        >
+                            <span style={{ color: 'white', fontSize: '24px' }}>⇥</span>
+                        </button>
                     </div>
                 </div>
                 
                 {/* Menú colapsable para móvil */}
                 <div className={`${isNavCollapsed ? 'd-none' : 'd-block'} d-lg-none mt-2`}>
                     <div className="py-2">
-                        <Link to="/tienda" className="nav-link px-3 py-2 d-block">
-                            Tienda de Lujo
+                        <Link to="/vehiculos" className="nav-link px-3 py-2 d-block">
+                            Vehiculos
                         </Link>
-                        <Link to="/contacto" className="nav-link px-3 py-2 d-block">
-                            Contáctanos
+                        <Link to="/pedidos" className="nav-link px-3 py-2 d-block">
+                            Pedidos
+                        </Link>
+                        <Link to="/empleados" className="nav-link px-3 py-2 d-block">
+                            Empleados
                         </Link>
                         <Link to="/restaurados" className="nav-link px-3 py-2 d-block">
-                            Tienda Restaurados
+                            Vehiculos Restaurados
                         </Link>
-                        <Link to="/nosotros" className="nav-link px-3 py-2 d-block">
-                            Sobre nosotros
+                        <Link to="/marcas" className="nav-link px-3 py-2 d-block">
+                            Marcas
+                        </Link>
+                        <Link to="/modelos" className="nav-link px-3 py-2 d-block">
+                            Modelos
                         </Link>
                     </div>
                 </div>

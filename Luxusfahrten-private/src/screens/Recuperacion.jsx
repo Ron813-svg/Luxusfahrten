@@ -5,13 +5,42 @@ import { useNavigate } from 'react-router-dom';
 const Recuperacion = () => {
   const navigate = useNavigate();
   const [email, setEmail] = useState('');
+  const [loading, setLoading] = useState(false);
+  const [message, setMessage] = useState('');
+  const [error, setError] = useState('');
 
-  const handleSubmit = (e) => {
+  const handleSubmit = async (e) => {
     e.preventDefault();
-    console.log('Enviando correo de recuperación a:', email);
-    // Si el correo es válido, navegar a la página de código
-    if (email) {
-      navigate('/RecuperacionCodigo/');
+    setLoading(true);
+    setError('');
+    setMessage('');
+
+    try {
+      const response = await fetch(`http://localhost:4000/api/passRecov/requestCode`, {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+        },
+        credentials: 'include', // Importante para cookies
+        body: JSON.stringify({ email }),
+      });
+
+      const data = await response.json();
+
+      if (response.ok) {
+        setMessage('Código de recuperación enviado a tu email');
+        // Esperar 2 segundos antes de navegar
+        setTimeout(() => {
+          navigate('/RecuperacionCodigo/');
+        }, 2000);
+      } else {
+        setError(data.message || 'Error al enviar código');
+      }
+    } catch (err) {
+      setError('Error de conexión con el servidor');
+      console.error('Error:', err);
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -19,7 +48,6 @@ const Recuperacion = () => {
     navigate('/Login/');
   };
 
-  // Verificar si el email tiene contenido
   const isEmailValid = email.trim() !== '';
 
   return (
@@ -38,7 +66,7 @@ const Recuperacion = () => {
             </div>
             <h5 className="mb-1">¿Tienes problemas para iniciar sesión?</h5>
             <p className="small text-white-50">
-              Ingresa tu correo electrónico y te enviaremos un enlace para acceder a tu cuenta.
+              Ingresa tu correo electrónico y te enviaremos un código para acceder a tu cuenta.
             </p>
           </div>
           
@@ -51,19 +79,32 @@ const Recuperacion = () => {
                 onChange={(e) => setEmail(e.target.value)}
                 placeholder="Correo electrónico"
                 required
+                disabled={loading}
               />
             </div>
+
+            {error && (
+              <div className="alert alert-danger text-center py-2 small mb-3">
+                {error}
+              </div>
+            )}
+
+            {message && (
+              <div className="alert alert-success text-center py-2 small mb-3">
+                {message}
+              </div>
+            )}
             
             <button 
               type="submit" 
               className="btn btn-light w-100 mb-3"
-              disabled={!isEmailValid}
+              disabled={!isEmailValid || loading}
               style={{
-                opacity: isEmailValid ? 1 : 0.6,
-                cursor: isEmailValid ? 'pointer' : 'not-allowed'
+                opacity: (isEmailValid && !loading) ? 1 : 0.6,
+                cursor: (isEmailValid && !loading) ? 'pointer' : 'not-allowed'
               }}
             >
-              Enviar correo
+              {loading ? 'Enviando...' : 'Enviar código'}
             </button>
           </form>
           
