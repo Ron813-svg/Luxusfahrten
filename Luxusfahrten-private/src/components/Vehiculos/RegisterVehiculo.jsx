@@ -1,34 +1,85 @@
-import React, { useState } from 'react';
+import React, { useState, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
-import { useNavigate } from 'react-router-dom';
 
-const RegisterVehiculo = () => {
-  const navigate = useNavigate();
-
-  const [formData, setFormData] = useState({
-    marca: '',
-    modelo: '',
-    anio: '',
-    precio: '',
-    tipo: '',
-    color: '',
-    descripcion: '',
-    especificaciones: '',
-    disponibilidad: '',
-    imagen: null
-  });
-
+const RegisterVehiculo = ({
+  id,
+  idBrand,
+  setIdBrand,
+  idModel,
+  setIdModel,
+  year,
+  setYear,
+  price,
+  setPrice,
+  type,
+  setType,
+  color,
+  setColor,
+  description,
+  setDescription,
+  specs,
+  setSpecs,
+  availability,
+  setAvailability,
+  image,
+  setImage,
+  brands,
+  models,
+  handleSubmit,
+  cleanData,
+  setActiveTab,
+  loading,
+  error,
+  success
+}) => {
   const [imagenPreview, setImagenPreview] = useState(null);
+
+  useEffect(() => {
+    if (image && typeof image === 'string') {
+      setImagenPreview(image);
+    }
+  }, [image]);
 
   const handleChange = (e) => {
     const { name, value } = e.target;
-    setFormData({ ...formData, [name]: value });
+    
+    switch(name) {
+      case 'idBrand':
+        setIdBrand(value);
+        break;
+      case 'idModel':
+        setIdModel(value);
+        break;
+      case 'year':
+        setYear(value);
+        break;
+      case 'price':
+        setPrice(value);
+        break;
+      case 'type':
+        setType(value);
+        break;
+      case 'color':
+        setColor(value);
+        break;
+      case 'description':
+        setDescription(value);
+        break;
+      case 'specs':
+        setSpecs(value);
+        break;
+      case 'availability':
+        setAvailability(value);
+        break;
+      default:
+        break;
+    }
   };
 
   const handleImageChange = (e) => {
     const file = e.target.files[0];
     if (file) {
-      setFormData({ ...formData, imagen: file });
+      setImage(file);
       const reader = new FileReader();
       reader.onloadend = () => {
         setImagenPreview(reader.result);
@@ -37,83 +88,111 @@ const RegisterVehiculo = () => {
     }
   };
 
-  const handleSubmit = (e) => {
+  const onSubmit = async (e) => {
     e.preventDefault();
-    console.log('Datos del vehículo:', formData);
-    // Aquí iría el código para enviar los datos al servidor
-    navigate('/vehiculos');
+    await handleSubmit(e);
+  };
+
+  const handleCancel = () => {
+    cleanData();
+    setActiveTab('list');
   };
 
   return (
     <div className="d-flex justify-content-center align-items-center min-vh-100" style={{ backgroundColor: '#9E9E9E' }}>
       <div className="container p-4" style={{ backgroundColor: '#5a5a5a', borderRadius: '10px', maxWidth: '900px' }}>
-        <form onSubmit={handleSubmit}>
+        <h3 className="text-white text-center mb-4">
+          {id ? 'Actualizar Vehículo' : 'Registrar Vehículo'}
+        </h3>
+
+        {error && (
+          <div className="alert alert-danger text-center py-2 small mb-3">
+            {error}
+          </div>
+        )}
+
+        {success && (
+          <div className="alert alert-success text-center py-2 small mb-3">
+            {success}
+          </div>
+        )}
+
+        <form onSubmit={onSubmit} encType="multipart/form-data">
           <div className="row">
             <div className="col-md-6">
               <div className="mb-3">
-                <label htmlFor="marca" className="form-label text-white">Marca</label>
+                <label htmlFor="idBrand" className="form-label text-white">Marca</label>
                 <select 
                   className="form-select bg-white text-dark border-0" 
-                  id="marca"
-                  name="marca"
-                  value={formData.marca}
+                  id="idBrand"
+                  name="idBrand"
+                  value={idBrand || ''}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 >
                   <option value="" disabled>Seleccione la marca</option>
-                  <option value="mercedes">Mercedes-Benz</option>
-                  <option value="bmw">BMW</option>
-                  <option value="audi">Audi</option>
-                  <option value="porsche">Porsche</option>
-                  <option value="ferrari">Ferrari</option>
-                  <option value="lamborghini">Lamborghini</option>
+                  {(brands || []).map((brand) => (
+                    <option key={brand._id} value={brand._id}>
+                      {brand.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div className="mb-3">
-                <label htmlFor="anio" className="form-label text-white">Año del vehículo</label>
-                <div className="input-group">
-                  <input 
-                    type="date" 
-                    className="form-control bg-white text-dark border-0" 
-                    id="anio"
-                    name="anio"
-                    value={formData.anio}
-                    onChange={handleChange}
-                    placeholder="dd/mm/yyyy"
-                    required
-                    style={{ height: '40px' }}
-                  />
-                </div>
-              </div>
-
-              <div className="mb-3">
-                <label htmlFor="tipo" className="form-label text-white">Tipo</label>
+                <label htmlFor="year" className="form-label text-white">Año del vehículo</label>
                 <input 
-                  type="text" 
+                  type="number" 
                   className="form-control bg-white text-dark border-0" 
-                  id="tipo"
-                  name="tipo"
-                  value={formData.tipo}
+                  id="year"
+                  name="year"
+                  value={year || ''}
                   onChange={handleChange}
-                  placeholder="Tipo de vehículo"
+                  placeholder="2024"
+                  min="1900"
+                  max="2030"
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 />
               </div>
 
               <div className="mb-3">
-                <label htmlFor="descripcion" className="form-label text-white">Descripción</label>
+                <label htmlFor="type" className="form-label text-white">Tipo</label>
+                <select 
+                  className="form-select bg-white text-dark border-0" 
+                  id="type"
+                  name="type"
+                  value={type || ''}
+                  onChange={handleChange}
+                  required
+                  disabled={loading}
+                  style={{ height: '40px' }}
+                >
+                  <option value="" disabled>Seleccione el tipo</option>
+                  <option value="Sedán">Sedán</option>
+                  <option value="SUV">SUV</option>
+                  <option value="Deportivo">Deportivo</option>
+                  <option value="Convertible">Convertible</option>
+                  <option value="Coupe">Coupe</option>
+                  <option value="Hatchback">Hatchback</option>
+                </select>
+              </div>
+
+              <div className="mb-3">
+                <label htmlFor="description" className="form-label text-white">Descripción</label>
                 <textarea 
                   className="form-control bg-white text-dark border-0" 
-                  id="descripcion"
-                  name="descripcion"
-                  value={formData.descripcion}
+                  id="description"
+                  name="description"
+                  value={description || ''}
                   onChange={handleChange}
                   placeholder="Descripción del vehículo"
                   rows="4"
                   required
+                  disabled={loading}
                 />
               </div>
 
@@ -135,7 +214,7 @@ const RegisterVehiculo = () => {
                       <img 
                         src={imagenPreview} 
                         alt="Vista previa" 
-                        style={{ maxWidth: '100%', maxHeight: '100%' }} 
+                        style={{ maxWidth: '100%', maxHeight: '100%', objectFit: 'contain' }} 
                       />
                     ) : (
                       <svg xmlns="http://www.w3.org/2000/svg" width="48" height="48" fill="currentColor" className="bi bi-camera text-white" viewBox="0 0 16 16">
@@ -151,9 +230,10 @@ const RegisterVehiculo = () => {
                     name="imagen"
                     onChange={handleImageChange}
                     accept="image/*"
+                    disabled={loading}
                   />
                   <label htmlFor="imagen" className="btn btn-outline-light" style={{ height: '40px', lineHeight: '28px' }}>
-                    Añadir
+                    {id ? 'Cambiar' : 'Añadir'}
                   </label>
                 </div>
               </div>
@@ -161,37 +241,40 @@ const RegisterVehiculo = () => {
             
             <div className="col-md-6">
               <div className="mb-3">
-                <label htmlFor="modelo" className="form-label text-white">Modelo</label>
+                <label htmlFor="idModel" className="form-label text-white">Modelo</label>
                 <select 
                   className="form-select bg-white text-dark border-0" 
-                  id="modelo"
-                  name="modelo"
-                  value={formData.modelo}
+                  id="idModel"
+                  name="idModel"
+                  value={idModel || ''}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 >
                   <option value="" disabled>Seleccione el modelo</option>
-                  <option value="clase_s">Clase S</option>
-                  <option value="serie_7">Serie 7</option>
-                  <option value="a8">A8</option>
-                  <option value="911">911</option>
-                  <option value="488">488</option>
-                  <option value="huracan">Huracán</option>
+                  {(models || []).map((model) => (
+                    <option key={model._id} value={model._id}>
+                      {model.name}
+                    </option>
+                  ))}
                 </select>
               </div>
 
               <div className="mb-3">
-                <label htmlFor="precio" className="form-label text-white">Precio</label>
+                <label htmlFor="price" className="form-label text-white">Precio</label>
                 <input 
-                  type="text" 
+                  type="number" 
                   className="form-control bg-white text-dark border-0" 
-                  id="precio"
-                  name="precio"
-                  value={formData.precio}
+                  id="price"
+                  name="price"
+                  value={price || ''}
                   onChange={handleChange}
-                  placeholder="Precio"
+                  placeholder="50000"
+                  min="0"
+                  step="0.01"
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 />
               </div>
@@ -203,37 +286,40 @@ const RegisterVehiculo = () => {
                   className="form-control bg-white text-dark border-0" 
                   id="color"
                   name="color"
-                  value={formData.color}
+                  value={color || ''}
                   onChange={handleChange}
                   placeholder="Ingrese el color del vehículo"
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 />
               </div>
 
               <div className="mb-3">
-                <label htmlFor="especificaciones" className="form-label text-white">Especificaciones</label>
+                <label htmlFor="specs" className="form-label text-white">Especificaciones</label>
                 <textarea 
                   className="form-control bg-white text-dark border-0" 
-                  id="especificaciones"
-                  name="especificaciones"
-                  value={formData.especificaciones}
+                  id="specs"
+                  name="specs"
+                  value={specs || ''}
                   onChange={handleChange}
-                  placeholder="Especificaciones del vehículo"
+                  placeholder="Especificaciones técnicas del vehículo"
                   rows="4"
                   required
+                  disabled={loading}
                 />
               </div>
 
               <div className="mb-3">
-                <label htmlFor="disponibilidad" className="form-label text-white">Disponibilidad</label>
+                <label htmlFor="availability" className="form-label text-white">Disponibilidad</label>
                 <select 
                   className="form-select bg-white text-dark border-0" 
-                  id="disponibilidad"
-                  name="disponibilidad"
-                  value={formData.disponibilidad}
+                  id="availability"
+                  name="availability"
+                  value={availability || ''}
                   onChange={handleChange}
                   required
+                  disabled={loading}
                   style={{ height: '40px' }}
                 >
                   <option value="" disabled>Seleccione la disponibilidad</option>
@@ -245,13 +331,23 @@ const RegisterVehiculo = () => {
             </div>
           </div>
           
-          <div className="d-flex justify-content-end mt-3">
-            <button 
-              type="submit" 
+          <div className="d-flex justify-content-between mt-3">
+            <button
+              type="button"
+              className="btn btn-secondary"
+              onClick={handleCancel}
+              disabled={loading}
+              style={{ width: '150px', height: '40px' }}
+            >
+              Cancelar
+            </button>
+            <button
+              type="submit"
               className="btn btn-light"
+              disabled={loading}
               style={{ width: '200px', height: '40px' }}
             >
-              Agregar
+              {loading ? 'Procesando...' : (id ? 'Actualizar' : 'Agregar')}
             </button>
           </div>
         </form>

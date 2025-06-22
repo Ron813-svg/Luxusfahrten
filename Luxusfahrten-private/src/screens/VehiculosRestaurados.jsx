@@ -1,65 +1,128 @@
 import React, { useEffect } from 'react';
-import { useNavigate } from 'react-router-dom';
-import RestauradosCard from '../components/VehiculosRestaurados/RestauradosCard';
+import 'bootstrap/dist/css/bootstrap.min.css';
+import { Toaster } from 'react-hot-toast';
 import useDataVehiculosRes from '../components/VehiculosRestaurados/hooks/useDataVehiculosRes';
+import ListRestaurados from '../components/VehiculosRestaurados/ListRestaurados';
+import RegisterRestaurado from '../components/VehiculosRestaurados/RegisterRestaurado';
+
+
 
 const VehiculosRestaurados = () => {
-  const {
-    vehiculosRes, // Lista de vehículos restaurados
-    fetchData, // Función para obtener los datos
-    deleteVehiculoRes, // Función para eliminar un vehículo
-    handleUpdateVehiculoRes, // Función para cargar datos de un vehículo para actualizar
-  } = useDataVehiculosRes();
-
-  const navigate = useNavigate();
-
-  // Obtener los datos al montar el componente
   useEffect(() => {
-    fetchData();
+    document.title = "Vehículos Restaurados";
   }, []);
+
+  const {
+    activeTab,
+    setActiveTab,
+    id,
+    idBrand,
+    setIdBrand,
+    idModel,
+    setIdModel,
+    year,
+    setYear,
+    price,
+    setPrice,
+    type,
+    setType,
+    color,
+    setColor,
+    description,
+    setDescription,
+    specs,
+    setSpecs,
+    availability,
+    setAvailability,
+    restorationSpecs,
+    setRestorationSpecs,
+    restorationCost,
+    setRestorationCost,
+    image,
+    setImage,
+    error,
+    success,
+    loading,
+    vehiculosRes,
+    brands,
+    models,
+    cleanData,
+    handleSubmit,
+    deleteVehiculoRes,
+    handleUpdate,
+    handleUpdateVehiculoRes,
+  } = useDataVehiculosRes();
 
   return (
     <div style={{ backgroundColor: '#9E9E9E', minHeight: '100vh' }}>
       <div className="container py-5">
-        <div
-          className="card"
-          style={{
-            backgroundColor: '#5a5a5a',
-            border: 'none',
-            borderRadius: '10px',
-            padding: '20px',
-            marginBottom: '20px',
-          }}
-        >
-          <div className="d-flex justify-content-between align-items-center mb-4">
-            <h2 className="text-white mb-0">Vehículos Restaurados</h2>
-            <button
-              className="btn btn-light"
-              onClick={() => navigate('/RegisterRestaurado')}
-              style={{ borderRadius: '4px' }}
-            >
-              Agregar Vehículo
-            </button>
+        {activeTab === "list" && (
+          <div
+            className="card"
+            style={{
+              backgroundColor: '#5a5a5a',
+              border: 'none',
+              borderRadius: '10px',
+              padding: '20px',
+              marginBottom: '20px',
+            }}
+          >
+            <h1 className="text-white text-center mb-4">Vehículos Restaurados</h1>
+            <ListRestaurados
+              vehiculosRes={vehiculosRes}
+              onUpdateVehiculoRes={handleUpdateVehiculoRes}
+              onDeleteVehiculoRes={deleteVehiculoRes}
+              loading={loading}
+              setActiveTab={setActiveTab}
+              cleanData={cleanData}
+            />
           </div>
+        )}
 
-          <div className="row g-4">
-            {vehiculosRes.map((vehiculo) => (
-              <div key={vehiculo.id} className="col-md-4">
-                <RestauradosCard
-                  vehiculo={vehiculo}
-                  onUpdate={() => handleUpdateVehiculoRes(vehiculo)}
-                  onDelete={() => deleteVehiculoRes(vehiculo.id)}
-                />
-              </div>
-            ))}
-            {vehiculosRes.length === 0 && (
-              <div className="col-12 text-center py-5">
-                <p className="text-white">No hay vehículos restaurados registrados.</p>
-              </div>
-            )}
-          </div>
-        </div>
+        
+        {activeTab === "form" && (
+          <RegisterRestaurado
+            id={id}
+            idBrand={idBrand}
+            setIdBrand={setIdBrand}
+            idModel={idModel}
+            setIdModel={setIdModel}
+            year={year}
+            setYear={setYear}
+            price={price}
+            setPrice={setPrice}
+            type={type}
+            setType={setType}
+            color={color}
+            setColor={setColor}
+            description={description}
+            setDescription={setDescription}
+            specs={specs}
+            setSpecs={setSpecs}
+            availability={availability}
+            setAvailability={setAvailability}
+            restorationSpecs={restorationSpecs}
+            setRestorationSpecs={setRestorationSpecs}
+            restorationCost={restorationCost}
+            setRestorationCost={setRestorationCost}
+            image={image}
+            setImage={setImage}
+            brands={brands}
+            models={models}
+            handleSubmit={id ? handleUpdate : handleSubmit}
+            cleanData={cleanData}
+            setActiveTab={setActiveTab}
+            loading={loading}
+            error={error}
+            success={success}
+          />
+        )}
       </div>
+      <Toaster
+        toastOptions={{
+          duration: 3000,
+        }}
+      />
     </div>
   );
 };
