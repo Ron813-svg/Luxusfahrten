@@ -78,6 +78,7 @@ function AppContent() {
         <Route path="/CompraFinal" element={<ResumenCompra />} />
         <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
         <Route path="/Contactanos" element={<ContactSection />} />
+        
         <Route path="/Informacion/:id" element={<InfoCard />} />
         <Route path="/InformacionRestaurado/:id" element={<InfoCardRestaurado />} />
         <Route path="/verificar-codigo" element={<VerifyCodePage />} />

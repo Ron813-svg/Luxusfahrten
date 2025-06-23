@@ -2,6 +2,7 @@ import React, { useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
 import emailjs from '@emailjs/browser';
+import { Toaster, toast } from 'react-hot-toast';
 
 const ContactSection = () => {
   const form = useRef();
@@ -10,16 +11,16 @@ const ContactSection = () => {
   const sendEmail = (e) => {
     e.preventDefault();
     emailjs.sendForm(
-      'service_ulvcb1e',      // ervice ID de EmailJS
-      'template_9i6m3vi',     // Template ID de EmailJS
+      'service_ulvcb1e',
+      'template_9i6m3vi',
       form.current,
-      'hH6C2Hmdst79HJkJm'       // Mi Public Key de EmailJS
+      'hH6C2Hmdst79HJkJm'
     )
     .then(() => {
-      alert('Mensaje enviado correctamente');
+      toast.success('Mensaje enviado correctamente');
       form.current.reset();
     }, () => {
-      alert('Error al enviar el mensaje');
+      toast.error('Error al enviar el mensaje');
     });
   };
 
@@ -28,6 +29,7 @@ const ContactSection = () => {
     // Utiliza Bootstrap para el diseño responsivo y estilos
 
     <div className="container py-5">
+      <Toaster position="top-center" />
       <div className="row">
         <div className="col-md-6 mb-4 mb-md-0">
           <div className="card">

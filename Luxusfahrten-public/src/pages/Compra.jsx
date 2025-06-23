@@ -21,6 +21,8 @@ const ProductDetail = () => {
   }, [id]);
 
   const goToInfo = () => {
+    // Guarda el precio final con impuestos
+    localStorage.setItem('precioFinal', totalPrice);
     navigate('/CompraForm/');
   };
 
