@@ -135,7 +135,7 @@ const RegisterVehiculo = ({
                   <option value="" disabled>Seleccione la marca</option>
                   {(brands || []).map((brand) => (
                     <option key={brand._id} value={brand._id}>
-                      {brand.name}
+                      {brand.brandName}
                     </option>
                   ))}
                 </select>
@@ -255,7 +255,7 @@ const RegisterVehiculo = ({
                   <option value="" disabled>Seleccione el modelo</option>
                   {(models || []).map((model) => (
                     <option key={model._id} value={model._id}>
-                      {model.name}
+                      {model.nameModel}
                     </option>
                   ))}
                 </select>

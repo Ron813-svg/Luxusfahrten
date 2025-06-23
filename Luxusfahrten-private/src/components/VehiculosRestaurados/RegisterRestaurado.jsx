@@ -148,7 +148,7 @@ const RegisterRestaurado = ({
                   <option value="">Seleccione la marca</option>
                   {brands && brands.map((brand) => (
                     <option key={brand._id} value={brand._id}>
-                      {brand.name || brand.brandName || 'Marca sin nombre'}
+                      {brand.brandName || brand.brandName || 'Marca sin nombre'}
                     </option>
                   ))}
                 </select>
@@ -290,7 +290,7 @@ const RegisterRestaurado = ({
                   <option value="">Seleccione el modelo</option>
                   {models && models.map((model) => (
                     <option key={model._id} value={model._id}>
-                      {model.name || model.modelName || 'Modelo sin nombre'}
+                      {model.nameModel || model.modelName || 'Modelo sin nombre'}
                     </option>
                   ))}
                 </select>

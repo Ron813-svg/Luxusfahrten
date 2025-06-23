@@ -10,10 +10,10 @@ const useDataPedido = () => {
   const [id, setId] = useState("");
   const [idVehiculo, setIdVehiculo] = useState("");
   const [idCliente, setIdCliente] = useState("");
-  const [paymentMethod, setPaymentMethod] = useState("");
-  const [orderStatus, setOrderStatus] = useState("");
-  const [orderDate, setOrderDate] = useState("");
-  const [totalPrice, setTotalPrice] = useState("");
+  const [metodoPago, setMetodoPago] = useState("");
+  const [terminosYSeguro, setTerminosYSeguro] = useState(false);
+  const [precioTotal, setPrecioTotal] = useState("");
+  const [status, setStatus] = useState("");
   const [error, setError] = useState(null);
   const [success, setSuccess] = useState(null);
   const [loading, setLoading] = useState(false);
@@ -25,10 +25,10 @@ const useDataPedido = () => {
     setId("");
     setIdVehiculo("");
     setIdCliente("");
-    setPaymentMethod("");
-    setOrderStatus("");
-    setOrderDate("");
-    setTotalPrice("");
+    setMetodoPago("");
+    setTerminosYSeguro(false);
+    setPrecioTotal("");
+    setStatus("");
     setError(null);
     setSuccess(null);
   };
@@ -37,7 +37,7 @@ const useDataPedido = () => {
   const fetchOrders = async () => {
     setLoading(true);
     try {
-      console.log("Obteniendo lista de pedidos...");
+      console.log("🔍 Obteniendo lista de pedidos...");
       const response = await fetch(ApiOrders);
       
       if (!response.ok) {
@@ -45,10 +45,10 @@ const useDataPedido = () => {
       }
       
       const data = await response.json();
-      console.log("Pedidos obtenidos:", data);
+      console.log("✅ Pedidos obtenidos:", data);
       setOrders(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error fetching orders:", error);
+      console.error("❌ Error fetching orders:", error);
       toast.error("Error al obtener la lista de pedidos");
       setOrders([]);
     } finally {
@@ -59,7 +59,7 @@ const useDataPedido = () => {
   // Obtener vehículos
   const fetchVehicles = async () => {
     try {
-      console.log("Obteniendo vehículos...");
+      console.log("🚗 Obteniendo vehículos...");
       const response = await fetch(ApiVehicles);
       
       if (!response.ok) {
@@ -68,10 +68,10 @@ const useDataPedido = () => {
       }
       
       const data = await response.json();
-      console.log("Vehículos obtenidos:", data);
+      console.log("✅ Vehículos obtenidos:", data);
       setVehicles(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error fetching vehicles:", error);
+      console.error("❌ Error fetching vehicles:", error);
       toast.error("Error al cargar los vehículos");
     }
   };
@@ -79,7 +79,7 @@ const useDataPedido = () => {
   // Obtener clientes
   const fetchClients = async () => {
     try {
-      console.log("Obteniendo clientes...");
+      console.log("👥 Obteniendo clientes...");
       const response = await fetch(ApiClients);
       
       if (!response.ok) {
@@ -88,16 +88,16 @@ const useDataPedido = () => {
       }
       
       const data = await response.json();
-      console.log("Clientes obtenidos:", data);
+      console.log("✅ Clientes obtenidos:", data);
       setClients(Array.isArray(data) ? data : []);
     } catch (error) {
-      console.error("Error fetching clients:", error);
+      console.error("❌ Error fetching clients:", error);
       toast.error("Error al cargar los clientes");
     }
   };
 
   useEffect(() => {
-    console.log("Iniciando carga de datos de pedidos...");
+    console.log("🚀 Iniciando carga de datos de pedidos...");
     fetchOrders();
     fetchVehicles();
     fetchClients();
@@ -109,23 +109,22 @@ const useDataPedido = () => {
     setLoading(true);
     setError(null);
 
-    console.log("Datos del pedido:", {
+    console.log("📝 Datos del pedido a enviar:", {
       idVehiculo,
       idCliente,
-      paymentMethod,
-      orderStatus,
-      orderDate,
-      totalPrice
+      metodoPago,
+      terminosYSeguro,
+      precioTotal,
+      status
     });
 
-    // Validación
+    // Validación de campos obligatorios
     const requiredFields = [
       { field: idVehiculo, name: "Vehículo" },
       { field: idCliente, name: "Cliente" },
-      { field: paymentMethod, name: "Método de pago" },
-      { field: orderStatus, name: "Estado del pedido" },
-      { field: orderDate, name: "Fecha del pedido" },
-      { field: totalPrice, name: "Precio total" }
+      { field: metodoPago, name: "Método de pago" },
+      { field: precioTotal, name: "Precio total" },
+      { field: status, name: "Estado del pedido" }
     ];
 
     const missingFields = requiredFields.filter(item => !item.field || item.field.toString().trim() === "");
@@ -139,17 +138,26 @@ const useDataPedido = () => {
       return;
     }
 
+    // Validar términos y seguro
+    if (!terminosYSeguro) {
+      const errorMsg = "Debe aceptar los términos y condiciones";
+      setError(errorMsg);
+      toast.error(errorMsg);
+      setLoading(false);
+      return;
+    }
+
     try {
       const orderData = {
         idVehiculo,
         idCliente,
-        paymentMethod,
-        orderStatus,
-        orderDate,
-        totalPrice: parseFloat(totalPrice)
+        metodoPago,
+        terminosYSeguro,
+        precioTotal: parseFloat(precioTotal),
+        status
       };
 
-      console.log("Enviando datos al servidor...");
+      console.log("🚀 Enviando datos al servidor:", orderData);
 
       const response = await fetch(ApiOrders, {
         method: "POST",
@@ -159,16 +167,16 @@ const useDataPedido = () => {
         body: JSON.stringify(orderData),
       });
 
-      console.log("Respuesta del servidor:", response.status);
+      console.log("📡 Respuesta del servidor:", response.status);
 
       if (!response.ok) {
         const errorData = await response.json();
-        console.error("Error del servidor:", errorData);
+        console.error("❌ Error del servidor:", errorData);
         throw new Error(errorData.message || "Error al crear el pedido");
       }
 
       const result = await response.json();
-      console.log("Pedido creado:", result);
+      console.log("✅ Pedido creado:", result);
 
       toast.success("Pedido creado exitosamente");
       setSuccess("Pedido creado correctamente");
@@ -176,7 +184,7 @@ const useDataPedido = () => {
       setActiveTab("list");
       await fetchOrders();
     } catch (error) {
-      console.error("Error al crear pedido:", error);
+      console.error("❌ Error al crear pedido:", error);
       setError(error.message);
       toast.error(error.message || "Error al crear el pedido");
     } finally {
@@ -191,7 +199,7 @@ const useDataPedido = () => {
     }
 
     try {
-      console.log("Eliminando pedido con ID:", orderId);
+      console.log("🗑️ Eliminando pedido con ID:", orderId);
       const response = await fetch(`${ApiOrders}/${orderId}`, {
         method: "DELETE",
       });
@@ -204,22 +212,22 @@ const useDataPedido = () => {
       toast.success("Pedido eliminado exitosamente");
       await fetchOrders();
     } catch (error) {
-      console.error("Error deleting order:", error);
+      console.error("❌ Error deleting order:", error);
       toast.error("Error al eliminar el pedido");
     }
   };
 
   // Cargar datos para editar
   const handleUpdateOrder = (order) => {
-    console.log("Cargando datos del pedido para editar:", order);
+    console.log("📝 Cargando datos del pedido para editar:", order);
     
     setId(order._id);
     setIdVehiculo(order.idVehiculo?._id || order.idVehiculo || "");
     setIdCliente(order.idCliente?._id || order.idCliente || "");
-    setPaymentMethod(order.paymentMethod || "");
-    setOrderStatus(order.orderStatus || "");
-    setOrderDate(order.orderDate?.slice(0, 10) || "");
-    setTotalPrice(order.totalPrice?.toString() || "");
+    setMetodoPago(order.metodoPago || "");
+    setTerminosYSeguro(order.terminosYSeguro || false);
+    setPrecioTotal(order.precioTotal?.toString() || "");
+    setStatus(order.status || "");
     setError(null);
     setSuccess(null);
     
@@ -231,9 +239,17 @@ const useDataPedido = () => {
     e.preventDefault();
     setLoading(true);
 
-    if (!idVehiculo || !idCliente || !paymentMethod || !orderStatus || !orderDate || !totalPrice) {
+    // Validación
+    if (!idVehiculo || !idCliente || !metodoPago || !precioTotal || !status) {
       setError("Todos los campos son obligatorios");
       toast.error("Todos los campos son obligatorios");
+      setLoading(false);
+      return;
+    }
+
+    if (!terminosYSeguro) {
+      setError("Debe aceptar los términos y condiciones");
+      toast.error("Debe aceptar los términos y condiciones");
       setLoading(false);
       return;
     }
@@ -244,10 +260,10 @@ const useDataPedido = () => {
       const updatedOrder = {
         idVehiculo,
         idCliente,
-        paymentMethod,
-        orderStatus,
-        orderDate,
-        totalPrice: parseFloat(totalPrice)
+        metodoPago,
+        terminosYSeguro,
+        precioTotal: parseFloat(precioTotal),
+        status
       };
 
       const response = await fetch(`${ApiOrders}/${id}`, {
@@ -269,7 +285,7 @@ const useDataPedido = () => {
       setActiveTab("list");
       await fetchOrders();
     } catch (error) {
-      console.error("Error al actualizar:", error);
+      console.error("❌ Error al actualizar:", error);
       setError(error.message);
       toast.error(error.message || "Error al actualizar el pedido");
     } finally {
@@ -278,42 +294,51 @@ const useDataPedido = () => {
   };
 
   return {
+    // Estados de la UI
     activeTab,
     setActiveTab,
+    loading,
+    error,
+    success,
+    
+    // Estados del formulario
     id,
     setId,
     idVehiculo,
     setIdVehiculo,
     idCliente,
     setIdCliente,
-    paymentMethod,
-    setPaymentMethod,
-    orderStatus,
-    setOrderStatus,
-    orderDate,
-    setOrderDate,
-    totalPrice,
-    setTotalPrice,
-    error,
-    setError,
-    success,
-    setSuccess,
-    loading,
-    setLoading,
+    metodoPago,
+    setMetodoPago,
+    terminosYSeguro,
+    setTerminosYSeguro,
+    precioTotal,
+    setPrecioTotal,
+    status,
+    setStatus,
+    
+    // Datos
     orders,
-    setOrders,
     vehicles,
-    setVehicles,
     clients,
-    setClients,
+    
+    // Funciones
     cleanData,
     handleSubmit,
-    fetchOrders,
-    fetchVehicles,
-    fetchClients,
     deleteOrder,
     handleUpdateOrder,
     handleUpdate,
+    fetchOrders,
+    fetchVehicles,
+    fetchClients,
+    
+    // Setters adicionales
+    setError,
+    setSuccess,
+    setLoading,
+    setOrders,
+    setVehicles,
+    setClients
   };
 };
 
