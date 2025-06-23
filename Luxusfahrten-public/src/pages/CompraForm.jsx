@@ -8,7 +8,7 @@ import useLoginUser from '../hooks/useLoginUser';
 function CompraForm() {
   const navigate = useNavigate();
   const { userInfo, isLoggedIn, loading: authLoading } = useLoginUser();
-  const { register, handleSubmit, formState: { errors, isValid }, reset, watch, setValue } = useForm({ 
+  const { register, handleSubmit, formState: { errors, isValid }, reset, watch, setValue, trigger } = useForm({ 
     mode: 'onChange',
     defaultValues: {
       fullName: '',
@@ -24,8 +24,18 @@ function CompraForm() {
   const [formData, setFormData] = useState(null);
   const [userDataLoaded, setUserDataLoaded] = useState(false);
 
-  // Observar el valor del checkbox de términos
+  // Observar todos los valores del formulario
+  const watchedValues = watch();
   const termsAccepted = watch('termsAccepted');
+
+  // Debug: Mostrar el estado del formulario
+  useEffect(() => {
+    console.log('🔍 Estado del formulario:', {
+      isValid,
+      errors,
+      values: watchedValues
+    });
+  }, [isValid, errors, watchedValues]);
 
   // Efecto para llenar automáticamente los datos del usuario
   useEffect(() => {
@@ -43,11 +53,16 @@ function CompraForm() {
       
       setUserDataLoaded(true);
       
+      // Después de setear los valores, re-validar el formulario
+      setTimeout(() => {
+        trigger();
+      }, 100);
+      
       if (fullName) {
         toast.success('Se han cargado automáticamente sus datos de perfil');
       }
     }
-  }, [isLoggedIn, userInfo, setValue, userDataLoaded]);
+  }, [isLoggedIn, userInfo, setValue, userDataLoaded, trigger]);
 
   // Efecto para verificar autenticación
   useEffect(() => {
@@ -57,7 +72,35 @@ function CompraForm() {
     }
   }, [isLoggedIn, authLoading, navigate]);
 
+  // Función para validar manualmente todos los campos
+  const validateAllFields = () => {
+    const requiredFields = ['fullName', 'documentId', 'phone', 'email', 'address', 'paymentMethod', 'termsAccepted'];
+    const values = watchedValues;
+    
+    for (const field of requiredFields) {
+      if (!values[field] || values[field] === '') {
+        console.error(`❌ Campo requerido vacío: ${field}`, values[field]);
+        return false;
+      }
+    }
+    
+    if (!values.termsAccepted) {
+      console.error('❌ Términos y condiciones no aceptados');
+      return false;
+    }
+    
+    return true;
+  };
+
   const onSubmit = (data) => {
+    console.log('📝 Datos del formulario en submit:', data);
+    
+    // Validación adicional manual
+    if (!validateAllFields()) {
+      toast.error("Por favor complete todos los campos obligatorios");
+      return;
+    }
+
     // Validar que se hayan aceptado los términos
     if (!data.termsAccepted) {
       toast.error("Debe aceptar los términos y condiciones para continuar");
@@ -84,6 +127,20 @@ function CompraForm() {
     setTimeout(() => {
       navigate('/CompraFinal/');
     }, 1000);
+  };
+
+  // Función para forzar el envío del formulario si todo está completo
+  const handleForceSubmit = () => {
+    const values = watchedValues;
+    console.log('🔄 Forzando envío con valores:', values);
+    
+    if (validateAllFields()) {
+      onSubmit(values);
+    } else {
+      toast.error("Complete todos los campos obligatorios antes de continuar");
+      // Forzar re-validación
+      trigger();
+    }
   };
 
   // Mostrar loading mientras se verifica la autenticación
@@ -118,6 +175,9 @@ function CompraForm() {
     );
   }
 
+  // Verificar si todos los campos obligatorios están llenos manualmente
+  const allFieldsValid = validateAllFields();
+
   return (
     <div className="container mt-4">
       <Toaster position="top-center" />
@@ -134,6 +194,15 @@ function CompraForm() {
                 <small className="text-primary">{userInfo.email}</small>
               </div>
             )}
+          </div>
+
+          {/* Debug Info - Remover en producción */}
+          <div className="alert alert-info mb-3">
+            <small>
+              <strong>Debug:</strong> isValid: {isValid.toString()}, 
+              allFieldsValid: {allFieldsValid.toString()}, 
+              termsAccepted: {termsAccepted.toString()}
+            </small>
           </div>
 
           <form onSubmit={handleSubmit(onSubmit)} className="border p-4 shadow rounded bg-light">
@@ -320,14 +389,26 @@ function CompraForm() {
               </div>
             )}
 
-            <div className="d-grid">
+            <div className="d-grid gap-2">
+              {/* Botón principal del formulario */}
               <button
                 type="submit"
                 className="btn btn-primary btn-lg"
-                disabled={!isValid}
+                disabled={!allFieldsValid}
               >
-                {!isValid ? 'Complete todos los campos obligatorios' : 'Continuar con el Resumen'}
+                {!allFieldsValid ? 'Complete todos los campos obligatorios' : 'Continuar con el Resumen'}
               </button>
+              
+              {/* Botón alternativo para forzar envío */}
+              {!isValid && allFieldsValid && (
+                <button
+                  type="button"
+                  className="btn btn-success btn-lg"
+                  onClick={handleForceSubmit}
+                >
+                  Forzar Envío (Todos los campos están completos)
+                </button>
+              )}
             </div>
 
             <small className="text-muted d-block mt-2 text-center">
