@@ -9,6 +9,9 @@ function Info() {
   const [auto, setAuto] = useState(null);
 
   useEffect(() => {
+    // Guardar el id en una cookie
+    document.cookie = `vehicleId=${id}; path=/;`;
+
     fetch(`http://localhost:4000/api/vehicles/${id}`)
       .then(res => res.json())
       .then(data => setAuto(data))

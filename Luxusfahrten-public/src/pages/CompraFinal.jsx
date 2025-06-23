@@ -3,15 +3,15 @@ import { useNavigate } from "react-router-dom";
 import ResumenCompraNormal from "../components/CompraFinalNormal";
 import ResumenCompraRestaurado from "../components/CompraFinalRestaurado";
 import { useCompraFinal } from "../hooks/useCompraFinal";
-
+ 
 const CompraFinal = () => {
   const [datosCompra, setDatosCompra] = useState(null);
   const [datosVehiculo, setDatosVehiculo] = useState(null);
   const [datosVehiculo2, setDatosVehiculo2] = useState(null);
   const navigate = useNavigate();
-
+ 
   const { realizarCompraFinal, loading } = useCompraFinal();
-
+ 
   // Genera una fecha aleatoria dentro de los próximos 2 meses
   const getRandomDeliveryDate = () => {
     const now = new Date();
@@ -25,28 +25,28 @@ const CompraFinal = () => {
       day: 'numeric'
     });
   };
-
+ 
   const [fechaEntrega] = useState(getRandomDeliveryDate());
-
+ 
   useEffect(() => {
     const datos = localStorage.getItem('datosCompra');
     if (datos) setDatosCompra(JSON.parse(datos));
-
+ 
     const vehiculo = localStorage.getItem('datosVehiculo');
     if (vehiculo) setDatosVehiculo(JSON.parse(vehiculo));
-
+ 
     const vehiculo2 = localStorage.getItem('datosVehiculo2');
     if (vehiculo2) setDatosVehiculo2(JSON.parse(vehiculo2));
   }, []);
-
+ 
   if (!datosCompra) {
     return <div className="container mt-4">Cargando resumen de compra...</div>;
   }
-
+ 
   // Handler para realizar la compra final
   const handleCompraFinal = async () => {
     const precioFinal = Number(localStorage.getItem('precioFinal')) || 0;
-
+ 
     const fechaISO = (() => {
       const partes = fechaEntrega.split(" de ");
       if (partes.length === 3) {
@@ -62,10 +62,10 @@ const CompraFinal = () => {
       }
       return new Date();
     })();
-
+ 
     const isRestaurado = !!datosVehiculo2;
     const vehiculoData = isRestaurado ? datosVehiculo2 : datosVehiculo;
-
+ 
     const payload = {
       name: datosCompra.fullName,
       document: datosCompra.documentId,
@@ -79,17 +79,17 @@ const CompraFinal = () => {
       ...vehiculoData,
       tipo: isRestaurado ? "restaurado" : "normal"
     };
-
+ 
     const res = await realizarCompraFinal(payload);
     if (res.ok) {
-      
+     
       setTimeout(() => navigate('/'), 2000);
     } else {
-      
+     
       setTimeout(() => navigate('/'), 2000);
     }
   };
-
+ 
   return (
     <>
       {datosVehiculo2 ? (
@@ -129,5 +129,6 @@ const CompraFinal = () => {
     </>
   );
 };
-
+ 
 export default CompraFinal;
+ 

@@ -4,12 +4,14 @@ import RightCard from './cardInfo2';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-
 function InfoRestaurado() {
   const { id } = useParams();
   const [auto, setAuto] = useState(null);
 
   useEffect(() => {
+    // Guardar el id en una cookie
+    document.cookie = `restoredVehicleId=${id}; path=/;`;
+
     fetch(`http://localhost:4000/api/restoredvehicles/${id}`)
       .then(res => res.json())
       .then(data => setAuto(data))

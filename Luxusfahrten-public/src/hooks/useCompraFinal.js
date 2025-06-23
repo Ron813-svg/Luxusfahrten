@@ -7,7 +7,7 @@ export function useCompraFinal() {
   const realizarCompraFinal = async (formData) => {
     setLoading(true);
     try {
-      const res = await fetch("http://localhost:4000/api/sales", {
+      const res = await fetch("http://localhost:4000/api/orders", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(formData),
