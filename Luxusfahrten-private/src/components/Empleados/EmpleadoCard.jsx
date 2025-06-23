@@ -71,21 +71,21 @@ const EmpleadoCard = ({ empleado, onUpdate, onDelete }) => {
         <div className="col-6">
           <div className="row mb-2">
             <div className="col-6">
-              <small className="text-muted">Nombre</small>
+              <small className="text-white">Nombre</small>
               <div className="text-white fw-medium">{empleado.name}</div>
             </div>
             <div className="col-6">
-              <small className="text-muted">Correo</small>
+              <small className="text-white">Correo</small>
               <div className="text-white fw-medium">{empleado.email}</div>
             </div>
           </div>
           <div className="row">
             <div className="col-6">
-              <small className="text-muted">Teléfono</small>
+              <small className="text-white">Teléfono</small>
               <div className="text-white fw-medium">{empleado.telephone}</div>
             </div>
             <div className="col-6">
-              <small className="text-muted">Tipo</small>
+              <small className="text-white">Tipo</small>
               <div className="text-white fw-medium">{empleado.employeeType}</div>
             </div>
           </div>

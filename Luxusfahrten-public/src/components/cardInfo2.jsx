@@ -1,42 +1,67 @@
 import { useNavigate } from 'react-router-dom';
-import { useEffect, useState } from 'react';
 import { Toaster, toast } from 'react-hot-toast';
-
-function useAuthCheck() {
-  const [isLoggedIn, setIsLoggedIn] = useState(null);
-
-  useEffect(() => {
-    fetch('http://localhost:4000/api/login/isLoggedIn', {
-      credentials: 'include'
-    })
-      .then(res => res.ok ? setIsLoggedIn(true) : setIsLoggedIn(false))
-      .catch(() => setIsLoggedIn(false));
-  }, []);
-
-  return isLoggedIn;
-}
+import useLoginUser from '../hooks/useLoginUser';
 
 function RightCard({ specs, price, id }) {
   const navigate = useNavigate();
-  const isLoggedIn = useAuthCheck();
+  const { isLoggedIn, loading, userInfo } = useLoginUser();
 
-  if (isLoggedIn === null) return <div>Cargando...</div>;
+  if (loading) {
+    return (
+      <div className="right-card">
+        <div className="text-center">
+          <div className="spinner-border spinner-border-sm" role="status">
+            <span className="visually-hidden">Verificando sesión...</span>
+          </div>
+          <p className="mt-2">Verificando sesión...</p>
+        </div>
+      </div>
+    );
+  }
 
-  if (!specs) return <div className="right-card">Cargando información...</div>;
+  if (!specs) {
+    return (
+      <div className="right-card">
+        <div className="text-center">
+          <div className="spinner-border spinner-border-sm" role="status">
+            <span className="visually-hidden">Cargando información...</span>
+          </div>
+          <p className="mt-2">Cargando información...</p>
+        </div>
+      </div>
+    );
+  }
 
   const goToCompra = () => {
-    if (isLoggedIn) {
-      toast.success('Estás logueado, puedes continuar con la compra');
+    if (isLoggedIn && userInfo) {
+      toast.success(`¡Hola ${userInfo.name}! Continuando con la compra...`);
+      
+      // Guardar información adicional para el proceso de compra
+      localStorage.setItem('clienteId', userInfo._id);
+      localStorage.setItem('userInfo', JSON.stringify(userInfo));
+      
       navigate(`/Compra/${id}`);
     } else {
       toast.error('Debes iniciar sesión para continuar con la compra');
-      navigate('/Login', { state: { redirectTo: `/Compra/${id}` } });
+      // Guardar la ruta a la que quiere ir después del login
+      localStorage.setItem('redirectAfterLogin', `/Compra/${id}`);
+      navigate('/login');
     }
   };
 
   return (
     <div className="right-card">
       <Toaster position="top-center" />
+      
+      {/* Mostrar información del usuario si está logueado */}
+      {isLoggedIn && userInfo && (
+        <div className="alert alert-success mb-3" style={{ fontSize: '0.85rem', padding: '0.5rem' }}>
+          <strong>✓ Sesión activa:</strong> {userInfo.name} {userInfo.lastName}
+          <br />
+          <small className="text-muted">{userInfo.email}</small>
+        </div>
+      )}
+      
       <div className="info-columns">
         <div>
           <h3>Historia</h3>
@@ -51,9 +76,27 @@ function RightCard({ specs, price, id }) {
       <hr />
 
       <h2 className="price-label">Precio desde:</h2>
-      <button className="price-button" onClick={goToCompra}>
+      <button 
+        className="price-button" 
+        onClick={goToCompra}
+        disabled={loading}
+        style={{
+          opacity: loading ? 0.7 : 1,
+          cursor: loading ? 'not-allowed' : 'pointer'
+        }}
+      >
         {price ? `$${price}` : 'Consultar'}
       </button>
+      
+      {!isLoggedIn && (
+        <div className="mt-2">
+          <small className="text-warning">
+            <i className="bi bi-info-circle me-1"></i>
+            Inicia sesión para continuar con la compra
+          </small>
+        </div>
+      )}
+      
       <br />
       <div className="legal-info">{specs.legal}</div>
     </div>
