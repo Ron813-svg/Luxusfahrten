@@ -67,68 +67,40 @@ const useDataVehicles = () => {
   // Obtener marcas - MEJORADO
   const fetchBrands = async () => {
     try {
-      console.log("🏷️ Fetching brands from:", ApiBrands);
+      console.log("🏷️ Obteniendo marcas...");
       const response = await fetch(ApiBrands);
       
-      console.log("📡 Brands response status:", response.status);
-      
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        console.error("❌ Error response brands:", response.status);
+        return;
       }
       
       const data = await response.json();
-      console.log("✅ Raw brands data:", data);
-      
-      if (Array.isArray(data) && data.length > 0) {
-        setBrands(data);
-        console.log("✅ Brands loaded successfully:", data.length, "marcas");
-        
-        // Mostrar las marcas en consola para debug
-        data.forEach((brand, index) => {
-          console.log(`   ${index + 1}. ${brand.name || brand.brandName || 'Sin nombre'} (ID: ${brand._id})`);
-        });
-      } else {
-        console.log("⚠️ No brands data received or empty array");
-        setBrands([]);
-      }
+      console.log("✅ Marcas obtenidas:", data);
+      setBrands(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("❌ Error fetching brands:", error);
-      toast.error("Error al cargar las marcas: " + error.message);
-      setBrands([]);
+      toast.error("Error al cargar las marcas");
     }
   };
 
   // Obtener modelos - MEJORADO
   const fetchModels = async () => {
     try {
-      console.log("📋 Fetching models from:", ApiModels);
+      console.log("📋 Obteniendo modelos...");
       const response = await fetch(ApiModels);
       
-      console.log("📡 Models response status:", response.status);
-      
       if (!response.ok) {
-        throw new Error(`HTTP ${response.status}: ${response.statusText}`);
+        console.error("❌ Error response models:", response.status);
+        return;
       }
       
       const data = await response.json();
-      console.log("✅ Raw models data:", data);
-      
-      if (Array.isArray(data) && data.length > 0) {
-        setModels(data);
-        console.log("✅ Models loaded successfully:", data.length, "modelos");
-        
-        // Mostrar los modelos en consola para debug
-        data.forEach((model, index) => {
-          console.log(`   ${index + 1}. ${model.name || model.modelName || 'Sin nombre'} (ID: ${model._id})`);
-        });
-      } else {
-        console.log("⚠️ No models data received or empty array");
-        setModels([]);
-      }
+      console.log("✅ Modelos obtenidos:", data);
+      setModels(Array.isArray(data) ? data : []);
     } catch (error) {
       console.error("❌ Error fetching models:", error);
-      toast.error("Error al cargar los modelos: " + error.message);
-      setModels([]);
+      toast.error("Error al cargar los modelos");
     }
   };
 
@@ -141,43 +113,6 @@ const useDataVehicles = () => {
     fetchBrands();
     fetchModels();
     
-    // DATOS DE PRUEBA - Si no cargan del servidor después de 5 segundos
-    const timeoutId = setTimeout(() => {
-      if (brands.length === 0) {
-        console.log("⚠️ No se cargaron marcas del servidor, usando datos de prueba");
-        setBrands([
-          { _id: "temp1", name: "Mercedes-Benz" },
-          { _id: "temp2", name: "BMW" },
-          { _id: "temp3", name: "Audi" },
-          { _id: "temp4", name: "Porsche" },
-          { _id: "temp5", name: "Ferrari" },
-          { _id: "temp6", name: "Lamborghini" }
-        ]);
-        toast.info("Usando marcas de prueba - Verifica la conexión del backend");
-      }
-      
-      if (models.length === 0) {
-        console.log("⚠️ No se cargaron modelos del servidor, usando datos de prueba");
-        setModels([
-          { _id: "model1", name: "Clase S" },
-          { _id: "model2", name: "Serie 7" },
-          { _id: "model3", name: "A8" },
-          { _id: "model4", name: "911" },
-          { _id: "model5", name: "488 GTB" },
-          { _id: "model6", name: "Huracán" },
-          { _id: "model7", name: "Aventador" },
-          { _id: "model8", name: "Classe C" },
-          { _id: "model9", name: "Serie 3" },
-          { _id: "model10", name: "A4" }
-        ]);
-        toast.info("Usando modelos de prueba - Verifica la conexión del backend");
-      }
-    }, 5000); // 5 segundos
-
-    // Cleanup
-    return () => {
-      clearTimeout(timeoutId);
-    };
   }, []);
 
   // Debug useEffect para monitorear cambios

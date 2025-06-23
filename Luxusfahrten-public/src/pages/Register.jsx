@@ -32,6 +32,7 @@ const Register = () => {
         password: data.password,
         telephone: data.telephone,
         dui: data.dui,
+        address: data.address, // ✅ Agregamos el campo address
         isVerified: false // Por defecto false hasta verificar email
       };
 
@@ -63,7 +64,7 @@ const Register = () => {
       <div
         className="card shadow-sm"
         style={{
-          maxWidth: "600px", // Aumentado para acomodar más campos
+          maxWidth: "600px",
           width: "90%",
           backgroundColor: "#5a5a5a",
           color: "white",
@@ -287,6 +288,32 @@ const Register = () => {
               {errors.birthday && (
                 <span className="text-danger small">
                   {errors.birthday.message}
+                </span>
+              )}
+            </div>
+
+            {/* ✅ NUEVO: Campo de dirección */}
+            <div className="mb-3">
+              <label htmlFor="address" className="form-label small">
+                Dirección *
+              </label>
+              <textarea
+                className="form-control"
+                id="address"
+                rows="2"
+                {...register("address", {
+                  required: "La dirección es obligatoria",
+                  minLength: {
+                    value: 10,
+                    message: "Mínimo 10 caracteres"
+                  }
+                })}
+                placeholder="Calle Principal #123, Colonia Centro, San Salvador"
+                disabled={loading}
+              />
+              {errors.address && (
+                <span className="text-danger small">
+                  {errors.address.message}
                 </span>
               )}
             </div>

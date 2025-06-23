@@ -6,7 +6,7 @@ const useRegisterUser = () => {
       console.log("🔄 Enviando datos de registro:", userData);
       
       // CORRECCIÓN: URL correcta con /user al final
-      const res = await fetch("http://localhost:4000/api/registerUsers/user", {
+      const res = await fetch("http://localhost:4000/api/registerUsers", {
         method: "POST",
         headers: { "Content-Type": "application/json" },
         body: JSON.stringify(userData),

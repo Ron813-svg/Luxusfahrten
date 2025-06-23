@@ -66,6 +66,11 @@ const VehiculoCard = ({ vehiculo, onUpdate, onDelete }) => {
             {vehiculo.availability}
           </span>
         </p>
+        <p className="mb-1"><strong>Especificaciones:</strong> {
+          typeof vehiculo.specs === 'object'
+            ? JSON.stringify(vehiculo.specs)
+            : vehiculo.specs
+        }</p>
         
         <div className="d-flex justify-content-between mt-3">
           <button 

@@ -16,7 +16,7 @@ const ListVehiculos = ({
   };
 
   return (
-    <>
+     <> 
       <h2 className="text-center fw-bold mb-4" style={{ color: "#fff" }}>
         Listado de vehículos
       </h2>
