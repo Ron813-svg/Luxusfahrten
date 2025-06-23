@@ -4,12 +4,13 @@ import RightCard from './cardInfo2';
 import { useParams } from 'react-router-dom';
 import { useEffect, useState } from 'react';
 
-function Info() {
+
+function InfoRestaurado() {
   const { id } = useParams();
   const [auto, setAuto] = useState(null);
 
   useEffect(() => {
-    fetch(`http://localhost:4000/api/vehicles/${id}`)
+    fetch(`http://localhost:4000/api/restoredvehicles/${id}`)
       .then(res => res.json())
       .then(data => setAuto(data))
       .catch(() => setAuto(null));
@@ -28,4 +29,4 @@ function Info() {
   );
 }
 
-export default Info;
+export default InfoRestaurado;

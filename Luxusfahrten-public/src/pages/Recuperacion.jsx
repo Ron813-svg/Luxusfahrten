@@ -1,17 +1,22 @@
-import React, { useState } from 'react';
+import React from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { usePasswordRecovery } from '../hooks/usePasswordRecovery';
+import { Toaster, toast } from 'react-hot-toast';
 
 const Recuperacion = () => {
   const navigate = useNavigate();
-  const [email, setEmail] = useState('');
+  const { register, handleSubmit, formState: { errors, isValid } } = useForm({ mode: 'onChange' });
+  const { requestCode, loading, error } = usePasswordRecovery();
 
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    console.log('Enviando correo de recuperación a:', email);
-    // Si el correo es válido, navegar a la página de código
-    if (email) {
+  const onSubmit = async (data) => {
+    const res = await requestCode(data.email);
+    if (res.ok) {
+      toast.success("Correo enviado correctamente");
       navigate('/RecuperacionCodigo/');
+    } else {
+      toast.error(res.error?.message || "No se pudo enviar el correo");
     }
   };
 
@@ -19,17 +24,14 @@ const Recuperacion = () => {
     navigate('/Login/');
   };
 
-  // Verificar si el email tiene contenido
-  const isEmailValid = email.trim() !== '';
-
   return (
     <div className="container-fluid d-flex justify-content-center align-items-center vh-100" style={{ backgroundColor: '#333' }}>
+      <Toaster position="top-center" />
       <div className="card shadow-sm" style={{ maxWidth: '400px', width: '90%', backgroundColor: '#5a5a5a', color: 'white' }}>
         <div className="card-body p-4">
           <div className="text-center mb-3">
             <h1 className="h3" style={{ fontFamily: '"Playfair Display", serif', letterSpacing: '1px' }}>LUXUSFAHRTEN</h1>
           </div>
-          
           <div className="text-center mb-4">
             <div className="d-inline-block bg-transparent p-2 rounded-circle border border-white mb-2">
               <svg xmlns="http://www.w3.org/2000/svg" width="32" height="32" fill="currentColor" className="bi bi-lock" viewBox="0 0 16 16">
@@ -41,35 +43,32 @@ const Recuperacion = () => {
               Ingresa tu correo electrónico y te enviaremos un enlace para acceder a tu cuenta.
             </p>
           </div>
-          
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="mb-3">
-              <input 
-                type="email" 
+              <input
+                type="email"
                 className="form-control bg-light text-dark"
-                value={email}
-                onChange={(e) => setEmail(e.target.value)}
                 placeholder="Correo electrónico"
-                required
+                {...register("email", { required: "El correo es obligatorio", pattern: { value: /^\S+@\S+$/i, message: "Correo inválido" } })}
+                disabled={loading}
               />
+              {errors.email && <span className="text-warning small">{errors.email.message}</span>}
             </div>
-            
-            <button 
-              type="submit" 
+            <button
+              type="submit"
               className="btn btn-light w-100 mb-3"
-              disabled={!isEmailValid}
+              disabled={!isValid || loading}
               style={{
-                opacity: isEmailValid ? 1 : 0.6,
-                cursor: isEmailValid ? 'pointer' : 'not-allowed'
+                opacity: isValid ? 1 : 0.6,
+                cursor: isValid ? 'pointer' : 'not-allowed'
               }}
             >
-              Enviar correo
+              {loading ? "Enviando..." : "Enviar correo"}
             </button>
           </form>
-          
           <div className="text-center mt-3">
-            <a 
-              className="text-white small text-decoration-none" 
+            <a
+              className="text-white small text-decoration-none"
               onClick={goToLogin}
               style={{ cursor: 'pointer' }}
             >

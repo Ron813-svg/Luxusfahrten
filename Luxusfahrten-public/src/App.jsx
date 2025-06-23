@@ -2,27 +2,28 @@ import { useState, useEffect } from 'react'
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { BrowserRouter as Router, Routes, Route, useLocation } from 'react-router-dom'
 import Navbar from './components/Navbar'
-import Login from './screens/Login'
-import Register from './screens/Register'
-import Recuperacion from './screens/Recuperacion'
-import VerifyCode from './screens/RecuperacionCodigo'
-import CambiarPassword from './screens/CambiarPassword'
-import ProductDetail from './screens/Compra';
-import FormularioCompra from './screens/CompraForm';
-import ResumenCompra from './screens/CompraFinal';
-import TermsAndConditions from './screens/TerminosCondiciones';
-import ContactSection from './screens/Contactanos';
+import Login from './pages/Login'
+import Register from './pages/Register'
+import Recuperacion from './pages/Recuperacion'
+import VerifyCode from './pages/RecuperacionCodigo'
+import CambiarPassword from './pages/CambiarPassword'
+import ProductDetail from './pages/Compra';
+import FormularioCompra from './pages/CompraForm';
+import ResumenCompra from './pages/CompraFinal';
+import TermsAndConditions from './pages/TerminosCondiciones';
+import ContactSection from './pages/Contactanos';
 import Footer from './components/footer';
-import InfoCard from './screens/Informacion';
-
+import InfoCard from './pages/Informacion';
+import InfoCardRestaurado from './pages/Informacion2';
+import VerifyCodePage from './pages/VerifyCode';
 
 
 
 //Paginas Principales
-import Home from './screens/Home';
-import TiendaLujo from './screens/TiendaLujo';
-import TiendaRestaurados from './screens/TiendaRestaurados'
-import Nosotros from './screens/Nosotros'
+import Home from './pages/Home';
+import TiendaLujo from './pages/TiendaLujo';
+import TiendaRestaurados from './pages/TiendaRestaurados'
+import Nosotros from './pages/Nosotros'
 
 
 <Route path="/" element={<Home />} />;
@@ -37,8 +38,8 @@ function AppContent() {
   const [showNavbar, setShowNavbar] = useState(true);
   const [showFooter, setShowFooter] = useState(true);
   // Lista de rutas donde el navbar debe estar oculto
-  const authRoutes = ['/login', '/register', '/recuperacion', '/recuperacioncodigo', '/cambiarpassword'];
-  
+  const authRoutes = ['/login', '/register', '/recuperacion', '/recuperacioncodigo', '/cambiarpassword', '/verificar-codigo'];
+
   useEffect(() => {
     // Obtener la ruta actual sin barras finales y en minúsculas
     const currentPath = location.pathname.toLowerCase().replace(/\/$/, '');
@@ -72,12 +73,14 @@ function AppContent() {
         <Route path="/recuperacion" element={<Recuperacion />} />
         <Route path="/recuperacioncodigo" element={<VerifyCode />} />
         <Route path="/cambiarpassword" element={<CambiarPassword />} />
-        <Route path="/Compra" element={<ProductDetail />} />
+        <Route path="/Compra/:id" element={<ProductDetail />} />
         <Route path="/CompraForm" element={<FormularioCompra />} />
         <Route path="/CompraFinal" element={<ResumenCompra />} />
         <Route path="/TerminosCondiciones" element={<TermsAndConditions />} />
         <Route path="/Contactanos" element={<ContactSection />} />
-        <Route path="/Informacion" element={<InfoCard />} />
+        <Route path="/Informacion/:id" element={<InfoCard />} />
+        <Route path="/InformacionRestaurado/:id" element={<InfoCardRestaurado />} />
+        <Route path="/verificar-codigo" element={<VerifyCodePage />} />
       </Routes>
       {showFooter && <Footer />}
     </>

@@ -1,14 +1,14 @@
-
 import img from '../assets/16655773891850.jpg';
 
+function LeftCard({ specs, image }) {
+  if (!specs) return <div className="left-card">Cargando especificaciones...</div>;
 
-function LeftCard() {
   return (
     <div className="left-card">
-      {/* Imagen del vehículo: Porsche 992 GT3 */}
+      {/* Imagen del vehículo */}
       <img
-        src={img}
-        alt="Porsche 992 GT3"
+        src={image || img}
+        alt={`${specs.marca} ${specs.modelo}`}
         className="car-photo"
       />
 
@@ -18,21 +18,20 @@ function LeftCard() {
       {/* Especificaciones técnicas del vehículo en formato de lista. */}
       <h2>Especificaciones</h2>
       <ul>
-        <li><strong>Motor:</strong> 4.0L Bóxer 6 cilindros, atmosférico</li>
-        <li><strong>Potencia:</strong> 502 hp a 8,400 rpm</li>
-        <li><strong>Torque:</strong> 470 Nm a 6,100 rpm</li>
-        <li><strong>Transmisión:</strong>
-          <ul>
-            <li>Manual de 6 velocidades</li>
-            <li>PDK de 7 velocidades (opcional)</li>
-          </ul>
-        </li>
-        <li><strong>Tracción:</strong> Trasera (RWD)</li>
-        <li><strong>Frenos:</strong> Discos carbono-cerámicos opcionales</li>
+        <li><strong>Marca:</strong> {specs.marca}</li>
+        <li><strong>Modelo:</strong> {specs.modelo}</li>
+        <li><strong>Motor:</strong> {specs.motor}</li>
+        <li><strong>Potencia:</strong> {specs.potencia}</li>
+        <li><strong>Torque:</strong> {specs.torque}</li>
+        <li><strong>Transmisión:</strong> {specs.transmision}</li>
+        <li><strong>Tracción:</strong> {specs.traccion}</li>
+        <li><strong>Frenos:</strong> {specs.frenos}</li>
+        <li><strong>Aceleración:</strong> {specs.aceleracion}</li>
+        <li><strong>Velocidad Máxima:</strong> {specs.velocidadMaxima}</li>
+        <li><strong>Rendimiento:</strong> {specs.rendimiento}</li>
       </ul>
     </div>
   );
 }
-
 
 export default LeftCard;

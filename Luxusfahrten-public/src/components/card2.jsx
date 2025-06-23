@@ -1,49 +1,44 @@
+import "./card2.css";
+import { useNavigate } from "react-router-dom";
 
-import './card2.css';
-import Img from '../assets/OIP.jpg';
-import { useNavigate } from 'react-router-dom';
-
-function NissanCard() {
-  // Hook para navegación programática entre páginas.
+function RestoredCarCard({ auto }) {
   const navigate = useNavigate();
 
-  // Función que redirige al usuario a la página de información del vehículo.
-  const goToInfo = () => {
-    navigate('/Informacion/');
-  };
+  if (!auto) return null;
 
   return (
-    <div className="nissan-card">
- 
-      <div className="nissan-header">
-        <h2>Nissan Skyline R34</h2>
+    <div className="restored-card" key={auto.id}>
+      <div className="restored-header">
+        <h2>
+          {auto.idBrand?.brandName} {auto.idModel?.nameModel}
+        </h2>
       </div>
 
-      {/* Imagen del vehículo */}
-      <img 
-        src={Img} 
-        alt="Nissan Skyline R34" 
-        className="nissan-image"
+      <img
+        src={auto.image}
+        alt={`${auto.idBrand?.brandName} ${auto.idModel?.nameModel}`}
+        className="restored-image"
       />
 
-      {/* Lista de características principales */}
-      <div className="nissan-features">
+      <div className="restored-features">
         <ul>
-          <li>⚙️ Motor: RB26DETT 2.6L DOHC Twin-Turbo L6 (6 cilindros en línea)</li>
-          <li>⚡ Potencia: 276 hp (oficialmente) / Puede superar los 330 hp reales</li>
-          <li>🚀 Aceleración (0-100 km/h): 4.9 segundos</li>
-          <li>🛞 Velocidad Máxima: 250 km/h (limitada electrónicamente)</li>
+          <li>⚙️ Motor: {auto.specs?.motor}</li>
+          <li>⚡ Potencia: {auto.specs?.potencia}</li>
+          <li>🚀 Aceleración: {auto.specs?.aceleracion}</li>
+          <li>🛞 Velocidad Máxima: {auto.specs?.velocidadMaxima}</li>
         </ul>
       </div>
 
-     
-      <button className="nissan-more-info-button" onClick={goToInfo}>Mas Información</button>
+      <button
+        className="restored-more-info-button"
+        onClick={() => navigate(`/InformacionRestaurado/${auto._id}`)}
+      >
+        Más Información
+      </button>
 
-      <div className="nissan-legal-notice">
-        Legal Information
-      </div>
+      <div className="restored-legal-notice">{auto.legal}</div>
     </div>
   );
 }
 
-export default NissanCard;
+export default RestoredCarCard;

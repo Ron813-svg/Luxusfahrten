@@ -1,12 +1,20 @@
-import React, { useState, useRef, useEffect } from 'react';
+import React, { useRef, useEffect } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import { useNavigate } from 'react-router-dom';
+import { useForm } from 'react-hook-form';
+import { usePasswordRecovery } from '../hooks/usePasswordRecovery';
+import { Toaster, toast } from 'react-hot-toast';
 
 const VerifyCode = () => {
   const navigate = useNavigate();
-  const [code, setCode] = useState(['', '', '', '', '', '']);
   const inputRefs = useRef([]);
-  
+  const { register, handleSubmit, setValue, watch, formState: { isValid } } = useForm({
+    mode: 'onChange',
+    defaultValues: { code: ['', '', '', '', '', ''] }
+  });
+  const { verifyCode, loading, error } = usePasswordRecovery();
+  const code = watch('code');
+
   useEffect(() => {
     inputRefs.current = inputRefs.current.slice(0, 6);
     // Enfocar automáticamente el primer campo al cargar
@@ -17,10 +25,7 @@ const VerifyCode = () => {
 
   const handleChange = (index, value) => {
     if (!/^\d*$/.test(value)) return; // Solo permitir dígitos
-    
-    const newCode = [...code];
-    newCode[index] = value;
-    setCode(newCode);
+    setValue(`code.${index}`, value, { shouldValidate: true });
     
     if (value && index < 5) {
       inputRefs.current[index + 1].focus();
@@ -33,14 +38,15 @@ const VerifyCode = () => {
     }
   };
 
-  const goToNewPassword = () => {
-    navigate('/CambiarPassword/');
-  };
-  
-  const handleSubmit = (e) => {
-    e.preventDefault();
-    const enteredCode = code.join('');
-    console.log('Código verificado:', enteredCode);
+  const onSubmit = async (data) => {
+    const codeString = data.code.join('');
+    const res = await verifyCode(codeString);
+    if (res.ok) {
+      toast.success("Código verificado");
+      navigate('/CambiarPassword/');
+    } else {
+      toast.error(res.error?.message || "Código incorrecto");
+    }
   };
 
   return (
@@ -59,7 +65,7 @@ const VerifyCode = () => {
             </p>
           </div>
           
-          <form onSubmit={handleSubmit}>
+          <form onSubmit={handleSubmit(onSubmit)}>
             <div className="d-flex justify-content-between mb-4 gap-1">
               {[0, 1, 2, 3, 4, 5].map((index) => (
                 <input
@@ -79,24 +85,26 @@ const VerifyCode = () => {
                     border: '1px solid rgba(121, 121, 121, 0.3)'
                   }}
                   value={code[index]}
+                  {...register(`code.${index}`, { required: true, maxLength: 1, pattern: /^\d$/ })}
                   onChange={(e) => handleChange(index, e.target.value)}
                   onKeyDown={(e) => handleKeyDown(index, e)}
+                  disabled={loading}
                 />
               ))}
             </div>
-            
+            {error && <span className="text-danger small">{error}</span>}
             <button 
               type="submit" 
               className="btn btn-light w-100"
               style={{ backgroundColor: '#e9ecef', color: '#333' }}
-              disabled={code.some(digit => !digit)}
-              onClick={goToNewPassword}
+              disabled={!isValid || loading}
             >
-              Confirmar
+              {loading ? "Verificando..." : "Confirmar"}
             </button>
           </form>
         </div>
       </div>
+      <Toaster position="top-center" />
     </div>
   );
 };

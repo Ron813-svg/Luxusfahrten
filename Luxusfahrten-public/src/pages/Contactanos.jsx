@@ -1,9 +1,27 @@
-import React from 'react';
+import React, { useRef } from 'react';
 import 'bootstrap/dist/css/bootstrap.min.css';
 import 'bootstrap-icons/font/bootstrap-icons.css';
+import emailjs from '@emailjs/browser';
 
 const ContactSection = () => {
+  const form = useRef();
   const mapEmbedUrl = `https://www.google.com/maps/embed/v1/place?q=Av.+Paseo+del+Prestige+%23789,+Distrito+Exclusivo,+San+Salvador,+El+Salvador&key=YOUR_API_KEY`; // Reemplaza YOUR_API_KEY
+
+  const sendEmail = (e) => {
+    e.preventDefault();
+    emailjs.sendForm(
+      'service_ulvcb1e',      // ervice ID de EmailJS
+      'template_9i6m3vi',     // Template ID de EmailJS
+      form.current,
+      'hH6C2Hmdst79HJkJm'       // Mi Public Key de EmailJS
+    )
+    .then(() => {
+      alert('Mensaje enviado correctamente');
+      form.current.reset();
+    }, () => {
+      alert('Error al enviar el mensaje');
+    });
+  };
 
   return (
     // Contenedor principal para la sección de contacto
@@ -53,18 +71,18 @@ const ContactSection = () => {
           <div className="card">
             <div className="card-body">
               <h2 className="card-title mb-4">Formulario para contactarnos</h2>
-              <form>
+              <form ref={form} onSubmit={sendEmail}>
                 <div className="mb-3">
                   <label htmlFor="nombre" className="form-label">Ingrese su nombre:</label>
-                  <input type="text" className="form-control" id="nombre" placeholder="Tu nombre" />
+                  <input type="text" className="form-control" id="nombre" name="user_name" required />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="email" className="form-label">Ingrese su email:</label>
-                  <input type="email" className="form-control" id="email" placeholder="Tu correo electrónico" />
+                  <input type="email" className="form-control" id="email" name="user_email" required />
                 </div>
                 <div className="mb-3">
                   <label htmlFor="mensaje" className="form-label">Describa su Problema o Pregunta:</label>
-                  <textarea className="form-control" id="mensaje" rows="4" placeholder="Escribe tu mensaje aquí"></textarea>
+                  <textarea className="form-control" id="mensaje" name="message" rows="4" required />
                 </div>
                 <button type="submit" className="btn btn-primary">Enviar</button>
               </form>
