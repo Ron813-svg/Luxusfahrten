@@ -1,5 +1,5 @@
 // Importamos React y los hooks necesarios.
-import React from "react";
+import React, { useState } from "react";
 import "bootstrap/dist/css/bootstrap.min.css";
 import { Link, useNavigate } from "react-router-dom";
 import { useForm } from "react-hook-form";
@@ -8,6 +8,7 @@ import { Toaster, toast } from "react-hot-toast";
 
 const Register = () => {
   const navigate = useNavigate();
+  const [loading, setLoading] = useState(false);
   const {
     register,
     handleSubmit,
@@ -18,12 +19,37 @@ const Register = () => {
 
   // Función que maneja el envío del formulario.
   const onSubmit = async (data) => {
-    const success = await registerUser(data);
-    if (success) {
-      toast.success("Registro exitoso. Revisa tu correo para el código.");
-      setTimeout(() => navigate("/verificar-codigo"), 1500);
-    } else {
-      toast.error("Error al registrar. Intenta de nuevo.");
+    setLoading(true);
+    console.log("📝 Datos del formulario:", data);
+
+    try {
+      // Transformar datos para que coincidan con el backend
+      const userData = {
+        name: data.name,
+        lastName: data.lastName,
+        birthday: data.birthday,
+        email: data.email,
+        password: data.password,
+        telephone: data.telephone,
+        dui: data.dui,
+        isVerified: false // Por defecto false hasta verificar email
+      };
+
+      console.log("🚀 Datos enviados al backend:", userData);
+
+      const result = await registerUser(userData);
+      
+      if (result.success) {
+        toast.success("Registro exitoso. Revisa tu correo para el código.");
+        setTimeout(() => navigate("/verificar-codigo"), 1500);
+      } else {
+        toast.error(result.error || "Error al registrar. Intenta de nuevo.");
+      }
+    } catch (error) {
+      console.error("❌ Error en el registro:", error);
+      toast.error("Error inesperado. Intenta de nuevo.");
+    } finally {
+      setLoading(false);
     }
   };
 
@@ -37,8 +63,8 @@ const Register = () => {
       <div
         className="card shadow-sm"
         style={{
-          maxWidth: "500px",
-          width: "85%",
+          maxWidth: "600px", // Aumentado para acomodar más campos
+          width: "90%",
           backgroundColor: "#5a5a5a",
           color: "white",
         }}
@@ -57,13 +83,62 @@ const Register = () => {
             </h1>
           </div>
 
-          <h4 className="text-center mb-3 fw-normal">Registrarse</h4>
+          <h4 className="text-center mb-4 fw-normal">Registrarse</h4>
 
           {/* Inicio del formulario */}
           <form onSubmit={handleSubmit(onSubmit)}>
-            <div className="mb-2">
+            {/* Fila 1: Nombre y Apellido */}
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label htmlFor="name" className="form-label small">
+                  Nombre *
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="name"
+                  {...register("name", { 
+                    required: "El nombre es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "Mínimo 2 caracteres"
+                    }
+                  })}
+                  placeholder="Juan"
+                  disabled={loading}
+                />
+                {errors.name && (
+                  <span className="text-danger small">{errors.name.message}</span>
+                )}
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="lastName" className="form-label small">
+                  Apellido *
+                </label>
+                <input
+                  type="text"
+                  className="form-control"
+                  id="lastName"
+                  {...register("lastName", { 
+                    required: "El apellido es obligatorio",
+                    minLength: {
+                      value: 2,
+                      message: "Mínimo 2 caracteres"
+                    }
+                  })}
+                  placeholder="Pérez"
+                  disabled={loading}
+                />
+                {errors.lastName && (
+                  <span className="text-danger small">{errors.lastName.message}</span>
+                )}
+              </div>
+            </div>
+
+            {/* Fila 2: Email */}
+            <div className="mb-3">
               <label htmlFor="email" className="form-label small">
-                Ingrese su correo
+                Correo electrónico *
               </label>
               <input
                 type="email"
@@ -71,8 +146,13 @@ const Register = () => {
                 id="email"
                 {...register("email", {
                   required: "El correo es obligatorio",
+                  pattern: {
+                    value: /^[A-Z0-9._%+-]+@[A-Z0-9.-]+\.[A-Z]{2,}$/i,
+                    message: "Correo inválido"
+                  }
                 })}
-                placeholder="Email"
+                placeholder="juan.perez@email.com"
+                disabled={loading}
               />
               {errors.email && (
                 <span className="text-danger small">
@@ -81,69 +161,62 @@ const Register = () => {
               )}
             </div>
 
-            <div className="mb-2">
-              <label htmlFor="password" className="form-label small">
-                Ingrese su contraseña
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="password"
-                {...register("password", {
-                  required: "La contraseña es obligatoria",
-                })}
-                placeholder="Password"
-              />
-              {errors.password && (
-                <span className="text-danger small">
-                  {errors.password.message}
-                </span>
-              )}
+            {/* Fila 3: Contraseñas */}
+            <div className="row mb-3">
+              <div className="col-md-6">
+                <label htmlFor="password" className="form-label small">
+                  Contraseña *
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="password"
+                  {...register("password", {
+                    required: "La contraseña es obligatoria",
+                    minLength: {
+                      value: 6,
+                      message: "Mínimo 6 caracteres"
+                    }
+                  })}
+                  placeholder="••••••••"
+                  disabled={loading}
+                />
+                {errors.password && (
+                  <span className="text-danger small">
+                    {errors.password.message}
+                  </span>
+                )}
+              </div>
+              <div className="col-md-6">
+                <label htmlFor="confirmPassword" className="form-label small">
+                  Confirmar contraseña *
+                </label>
+                <input
+                  type="password"
+                  className="form-control"
+                  id="confirmPassword"
+                  {...register("confirmPassword", {
+                    required: "Confirma tu contraseña",
+                    validate: (value) =>
+                      value === watch("password") ||
+                      "Las contraseñas no coinciden",
+                  })}
+                  placeholder="••••••••"
+                  disabled={loading}
+                />
+                {errors.confirmPassword && (
+                  <span className="text-danger small">
+                    {errors.confirmPassword.message}
+                  </span>
+                )}
+              </div>
             </div>
 
-            <div className="mb-2">
-              <label htmlFor="confirmPassword" className="form-label small">
-                Confirmar contraseña
-              </label>
-              <input
-                type="password"
-                className="form-control"
-                id="confirmPassword"
-                {...register("confirmPassword", {
-                  required: "Confirma tu contraseña",
-                  validate: (value) =>
-                    value === watch("password") ||
-                    "Las contraseñas no coinciden",
-                })}
-                placeholder="Confirm Password"
-              />
-              {errors.confirmPassword && (
-                <span className="text-danger small">
-                  {errors.confirmPassword.message}
-                </span>
-              )}
-            </div>
-
-            <div className="mb-2">
-              <label htmlFor="name" className="form-label small">
-                Ingrese su nombre
-              </label>
-              <input
-                type="text"
-                className="form-control"
-                id="name"
-                {...register("name", { required: "El nombre es obligatorio" })}
-                placeholder="Nombre completo"
-              />
-              {errors.name && (
-                <span className="text-danger small">{errors.name.message}</span>
-              )}
-            </div>
-
-            <div className="row mb-2">
-              <div className="col-md-6 mb-2 mb-md-0">
+            {/* Fila 4: Teléfono y DUI */}
+            <div className="row mb-3">
+              <div className="col-md-6">
                 <label htmlFor="telephone" className="form-label small">
-                  Número de teléfono
+                  Número de teléfono *
                 </label>
                 <input
                   type="tel"
@@ -151,8 +224,13 @@ const Register = () => {
                   id="telephone"
                   {...register("telephone", {
                     required: "El teléfono es obligatorio",
+                    pattern: {
+                      value: /^[0-9]{8,}$/,
+                      message: "Mínimo 8 dígitos"
+                    }
                   })}
-                  placeholder="Teléfono"
+                  placeholder="7812-3456"
+                  disabled={loading}
                 />
                 {errors.telephone && (
                   <span className="text-danger small">
@@ -161,52 +239,80 @@ const Register = () => {
                 )}
               </div>
               <div className="col-md-6">
-                <label htmlFor="birthday" className="form-label small">
-                  Fecha de nacimiento
+                <label htmlFor="dui" className="form-label small">
+                  DUI *
                 </label>
                 <input
                   type="text"
                   className="form-control"
-                  id="birthday"
-                  {...register("birthday", {
-                    required: "La fecha es obligatoria",
+                  id="dui"
+                  {...register("dui", {
+                    required: "El DUI es obligatorio",
+                    pattern: {
+                      value: /^\d{8}-\d$/,
+                      message: "Formato: 12345678-9"
+                    }
                   })}
-                  placeholder="YYYY-MM-DD"
+                  placeholder="12345678-9"
+                  disabled={loading}
                 />
-                {errors.birthday && (
+                {errors.dui && (
                   <span className="text-danger small">
-                    {errors.birthday.message}
+                    {errors.dui.message}
                   </span>
                 )}
               </div>
             </div>
 
+            {/* Fila 5: Fecha de nacimiento */}
             <div className="mb-3">
-              <label htmlFor="address" className="form-label small">
-                Ingrese su dirección
+              <label htmlFor="birthday" className="form-label small">
+                Fecha de nacimiento *
               </label>
               <input
-                type="text"
+                type="date"
                 className="form-control"
-                id="address"
-                {...register("address", {
-                  required: "La dirección es obligatoria",
+                id="birthday"
+                {...register("birthday", {
+                  required: "La fecha de nacimiento es obligatoria",
+                  validate: (value) => {
+                    const today = new Date();
+                    const birthDate = new Date(value);
+                    const age = today.getFullYear() - birthDate.getFullYear();
+                    return age >= 18 || "Debes ser mayor de 18 años";
+                  }
                 })}
-                placeholder="Your location"
+                disabled={loading}
               />
-              {errors.address && (
+              {errors.birthday && (
                 <span className="text-danger small">
-                  {errors.address.message}
+                  {errors.birthday.message}
                 </span>
               )}
             </div>
 
-            <button type="submit" className="btn btn-light w-100 py-2 mb-2">
-              Registrarse
+            {/* Nota informativa */}
+            <div className="alert alert-info py-2 mb-3" style={{ fontSize: '0.85rem' }}>
+              <strong>📧 Verificación:</strong> Después del registro, recibirás un código de verificación en tu correo electrónico.
+            </div>
+
+            <button 
+              type="submit" 
+              className="btn btn-light w-100 py-2 mb-2"
+              disabled={loading}
+            >
+              {loading ? (
+                <>
+                  <span className="spinner-border spinner-border-sm me-2" role="status" aria-hidden="true"></span>
+                  Registrando...
+                </>
+              ) : (
+                "Registrarse"
+              )}
             </button>
           </form>
 
-          <div className="text-center mt-2 small">
+          <div className="text-center mt-3 small">
             <span>¿Ya tienes una cuenta? </span>
             <Link className="text-white text-decoration-none" to="/Login/">
               Iniciar sesión
