@@ -55,8 +55,8 @@ const RestauradosCard = ({ vehiculo, onUpdate, onDelete }) => {
       </div>
       
       <div className="p-3">
-        <p className="mb-1"><strong>Marca:</strong> {vehiculo.idBrand?.name || 'No especificada'}</p>
-        <p className="mb-1"><strong>Modelo:</strong> {vehiculo.idModel?.name || 'No especificado'}</p>
+        <p className="mb-1"><strong>Marca:</strong> {vehiculo.idBrand?.brandName || 'No especificada'}</p>
+        <p className="mb-1"><strong>Modelo:</strong> {vehiculo.idModel?.nameModel || 'No especificado'}</p>
         <p className="mb-1"><strong>Año:</strong> {vehiculo.year}</p>
         <p className="mb-1"><strong>Precio:</strong> ${vehiculo.price?.toLocaleString()}</p>
         <p className="mb-1"><strong>Tipo:</strong> {vehiculo.type}</p>

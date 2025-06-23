@@ -12,7 +12,7 @@ const VehiculoCard = ({ vehiculo, onUpdate, onDelete }) => {
       return (
         <img 
           src={vehiculo.image} 
-          alt={`${vehiculo.idBrand?.name || ''} ${vehiculo.idModel?.name || ''}`}
+          alt={`${vehiculo.idBrand?.brandName || ''} ${vehiculo.idModel?.nameModel || ''}`}
           className="img-fluid"
           style={{ maxHeight: '150px', objectFit: 'contain', width: '100%' }}
           onError={(e) => {
@@ -55,8 +55,8 @@ const VehiculoCard = ({ vehiculo, onUpdate, onDelete }) => {
       </div>
       
       <div className="p-3">
-        <p className="mb-1"><strong>Marca:</strong> {vehiculo.idBrand?.name || 'No especificada'}</p>
-        <p className="mb-1"><strong>Modelo:</strong> {vehiculo.idModel?.name || 'No especificado'}</p>
+        <p className="mb-1"><strong>Marca:</strong> {vehiculo.idBrand?.brandName || 'No especificada'}</p>
+        <p className="mb-1"><strong>Modelo:</strong> {vehiculo.idModel?.nameModel || 'No especificado'}</p>
         <p className="mb-1"><strong>Año:</strong> {vehiculo.year}</p>
         <p className="mb-1"><strong>Precio:</strong> ${vehiculo.price?.toLocaleString()}</p>
         <p className="mb-1"><strong>Tipo:</strong> {vehiculo.type}</p>
